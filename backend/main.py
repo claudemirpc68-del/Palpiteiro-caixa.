@@ -42,12 +42,33 @@ def set_in_cache(key: str, data: Any):
         "data": data
     }
 
+import subprocess
+
 # Mapeamento de nomes de loterias do frontend para a API da Caixa
 LOTERIAS_MAP = {
     "mega": "megasena",
     "quina": "quina",
     "lotofacil": "lotofacil"
 }
+
+@app.get("/api/test-curl")
+def test_curl():
+    try:
+        url = "https://servicebus2.caixa.gov.br/portaldeloterias/api/megasena"
+        result = subprocess.run(
+            ["curl", "-k", "-s", "-i", "-H", "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36", url],
+            capture_output=True,
+            text=True,
+            timeout=10
+        )
+        return {
+            "stdout": result.stdout[:2000],
+            "stderr": result.stderr,
+            "returncode": result.returncode
+        }
+    except Exception as e:
+        return {"error": str(e)}
+
 
 @app.get("/api/resultados/{jogo}")
 def obter_ultimo_resultado(jogo: str):
