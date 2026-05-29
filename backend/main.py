@@ -51,23 +51,29 @@ LOTERIAS_MAP = {
     "lotofacil": "lotofacil"
 }
 
-@app.get("/api/test-curl")
-def test_curl():
+@app.get("/api/test-headers")
+def test_headers():
+    url = "https://servicebus2.caixa.gov.br/portaldeloterias/api/megasena"
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        "Accept": "application/json, text/plain, */*",
+        "Accept-Language": "pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7",
+        "Accept-Encoding": "gzip, deflate, br",
+        "Connection": "keep-alive",
+        "Host": "servicebus2.caixa.gov.br"
+    }
     try:
-        url = "https://servicebus2.caixa.gov.br/portaldeloterias/api/megasena"
-        result = subprocess.run(
-            ["curl", "-k", "-s", "-i", "-H", "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36", url],
-            capture_output=True,
-            text=True,
-            timeout=10
-        )
+        # Use a new requests session to preserve connection
+        session = requests.Session()
+        response = session.get(url, headers=headers, verify=False, timeout=10)
         return {
-            "stdout": result.stdout[:2000],
-            "stderr": result.stderr,
-            "returncode": result.returncode
+            "status_code": response.status_code,
+            "headers": dict(response.headers),
+            "text": response.text[:1000]
         }
     except Exception as e:
         return {"error": str(e)}
+
 
 
 @app.get("/api/resultados/{jogo}")
