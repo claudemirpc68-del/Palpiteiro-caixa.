@@ -626,6 +626,7 @@ function mostrarToast(mensagem, tipo = 'success') {
   setTimeout(() => toast.remove(), 3000);
 }
 
+const ApiService = {
   // Se estiver abrindo o arquivo direto no PC (file://), usa localhost, senão usa /api relativo do servidor unificado
   baseUrl: window.location.protocol === 'file:' ? 'http://localhost:8000/api' : '/api',
   
