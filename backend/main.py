@@ -75,6 +75,22 @@ def test_headers():
         return {"error": str(e)}
 
 
+@app.get("/api/test-curl-cffi")
+def test_curl_cffi():
+    try:
+        from curl_cffi import requests as requests_cffi
+        url = "https://servicebus2.caixa.gov.br/portaldeloterias/api/megasena"
+        response = requests_cffi.get(url, impersonate="chrome", verify=False, timeout=10)
+        return {
+            "status_code": response.status_code,
+            "headers": dict(response.headers),
+            "text": response.text[:1000]
+        }
+    except Exception as e:
+        return {"error": str(e)}
+
+
+
 
 @app.get("/api/resultados/{jogo}")
 def obter_ultimo_resultado(jogo: str):
