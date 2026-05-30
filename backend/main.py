@@ -109,14 +109,15 @@ def obter_ultimo_resultado(jogo: str):
     }
 
     try:
-        response = requests.get(url, headers=headers, verify=False, timeout=10) # verify=False contorna alguns problemas de SSL da Caixa
+        from curl_cffi import requests as requests_cffi
+        response = requests_cffi.get(url, headers=headers, impersonate="chrome", verify=False, timeout=15)
         response.raise_for_status()
         data = response.json()
         
         # Salva no cache
         set_in_cache(cache_key, data)
         return data
-    except requests.exceptions.RequestException as e:
+    except Exception as e:
         print(f"Erro ao acessar API da Caixa: {e}")
         raise HTTPException(status_code=503, detail="Serviço de resultados indisponível")
 
@@ -136,14 +137,15 @@ def obter_resultado_concurso(jogo: str, concurso: int):
     }
 
     try:
-        response = requests.get(url, headers=headers, verify=False, timeout=10)
+        from curl_cffi import requests as requests_cffi
+        response = requests_cffi.get(url, headers=headers, impersonate="chrome", verify=False, timeout=15)
         response.raise_for_status()
         data = response.json()
         
         # Cache permanente para concursos passados
         cache[cache_key] = {"timestamp": time.time() + 999999999, "data": data}
         return data
-    except requests.exceptions.RequestException:
+    except Exception:
         raise HTTPException(status_code=404, detail="Concurso não encontrado ou serviço indisponível")
 
 @app.get("/api/noticias/{jogo}")

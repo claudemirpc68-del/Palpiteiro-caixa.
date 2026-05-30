@@ -536,7 +536,7 @@ function processarMensagemAgente(pergunta) {
     resposta = `Minha estratégia probabilística para a **${data.nome}** é baseada em:\n\n${principiosTexto}\n\nCombinando essa dispersão e paridade, conseguimos cobrir as faixas matemáticas com maior probabilidade histórica de sorteio!`;
   }
   // 7. Preço da Aposta
-  else if (textoMinusculo.match(/(preço|preco|custa|custo|valor da aposta|valor do jogo|quanto pago|cobrado|pagar pela aposta)/)) {
+  else if (textoMinusculo.match(/(preço|preco|custa|custo|valor|quanto pago|cobrado|pagar)/)) {
     let preco = "";
     let extra = "";
     if (jogoAtivo === 'mega') {
