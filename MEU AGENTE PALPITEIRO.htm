@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agente Probabilístico - Loterias Caixa</title>
+  <meta name="description" content="Gere palpites probabilísticos inteligentes e analise estatísticas de dezenas quentes e frias para Mega-Sena, Quina e Lotofácil.">
+  
+  <!-- Google Fonts - Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800;900&display=swap" rel="stylesheet">
+  
+  <!-- CSS Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Título principal oculto para SEO e leitores de tela -->
+  <h1 class="sr-only">Painel do Agente Probabilístico - Loterias Caixa</h1>
+
+  <div class="app-wrapper">
+    <div class="dashboard-container" id="dashboardContainer">
+      
+      <!-- Cabeçalho do Painel -->
+      <header class="dashboard-header">
+        <div class="logo-area">
+          <div class="logo-icon">
+            <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M16 16v1a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2v1" />
+              <path d="M18 8h4a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2h-4" />
+              <circle cx="8" cy="12" r="2" />
+            </svg>
+          </div>
+          <div class="logo-text">
+            <span class="logo-title">PALPITEIRO CAIXA</span>
+            <span class="logo-subtitle">Módulo de Análise Probabilística</span>
+          </div>
+        </div>
+        
+        <!-- Menu de Seleção de Loterias -->
+        <nav class="lottery-nav" aria-label="Seleção de Loteria">
+          <button id="btn-mega" class="nav-btn active" onclick="selecionarJogo('mega')" aria-selected="true">
+            <span class="nav-btn-indicator mega"></span>
+            Mega-Sena
+          </button>
+          <button id="btn-quina" class="nav-btn" onclick="selecionarJogo('quina')" aria-selected="false">
+            <span class="nav-btn-indicator quina"></span>
+            Quina
+          </button>
+          <button id="btn-lotofacil" class="nav-btn" onclick="selecionarJogo('lotofacil')" aria-selected="false">
+            <span class="nav-btn-indicator lotofacil"></span>
+            Lotofácil
+          </button>
+        </nav>
+      </header>
+
+      <!-- Área do Desenho (Exibição da Imagem Original sem sobreposição) -->
+      <div class="dashboard-visual-area">
+        <img src="dashboard-agente-probabilistico.png" alt="Painel Visual Agente Probabilístico" class="dashboard-visual-image">
+      </div>
+
+      <!-- Conteúdo Principal: Painel Único Compacto na Base -->
+      <main class="dashboard-content">
+        
+        <section class="main-panel panel-glass">
+
+          <!-- Coluna Esquerda: Painel do Agente -->
+          <div class="agent-panel">
+            <!-- Cabeçalho do Agente (Status e Nome) -->
+            <div class="panel-agent-header">
+              <div class="agent-status-badge">
+                <span class="pulse-dot"></span>
+                <span id="agent-status-text">Análise Mega-Sena Ativa</span>
+              </div>
+              <h2 id="agent-name" class="agent-name">Consultor Mega-Sena</h2>
+            </div>
+
+            <!-- Painel de Conversação Interativa (Chatbot) -->
+            <div class="agent-chat-box">
+              <div id="chat-messages" class="chat-messages">
+                <!-- Mensagens geradas dinamicamente pelo JS -->
+              </div>
+              <div class="chat-input-area">
+                <input type="text" id="chat-input" placeholder="Pergunte ao Consultor..." onkeydown="if(event.key === 'Enter') enviarMensagemChat()">
+                <button id="btn-send-chat" onclick="enviarMensagemChat()" aria-label="Enviar mensagem">
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="22" y1="2" x2="11" y2="13"></line>
+                    <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Coluna Direita: Painel de Análise -->
+          <div class="analysis-panel">
+
+            <!-- Seção do Último Resultado Oficial -->
+            <div class="resultado-section" id="ultimo-resultado" style="display: none;">
+              <div class="resultado-header">
+                <h3>Último Sorteio <span id="res-concurso" class="badge" style="background: rgba(255,255,255,0.1);"></span></h3>
+                <span class="resultado-data" id="res-data"></span>
+              </div>
+              <div id="res-bolas" class="numbers-display" style="min-height: auto; margin-bottom: 10px;">
+                <!-- Bolas geradas pelo JS -->
+              </div>
+              <div id="res-acumulou" class="badge-acumulou" style="display: none;">ACUMULOU!</div>
+              <div class="resultado-premios" id="res-premios">
+                <!-- Prêmios gerados pelo JS -->
+              </div>
+            </div>
+
+            <!-- Separador -->
+            <div class="divider"></div>
+
+            <!-- Seção de Frequência de Dezenas (Quentes / Frias) -->
+            <div class="frequency-section">
+              <div class="frequency-column">
+                <h3 class="title-hot">Quentes <span class="badge badge-hot">Mais Sorteadas</span></h3>
+                <div id="hot-numbers" class="numbers-display">
+                  <!-- Bolas geradas pelo JS -->
+                </div>
+              </div>
+              
+              <div class="frequency-column">
+                <h3 class="title-cold">Frias <span class="badge badge-cold">Atrasadas</span></h3>
+                <div id="cold-numbers" class="numbers-display">
+                  <!-- Bolas geradas pelo JS -->
+                </div>
+              </div>
+            </div>
+
+            <!-- Separador -->
+            <div class="divider"></div>
+
+            <!-- Gerador de Palpites -->
+            <div class="generator-section">
+              <div class="generator-header">
+                <h3>Palpites Probabilísticos</h3>
+                <p>Composição balanceada entre dezenas quentes, médias e frias.</p>
+              </div>
+
+              <!-- Área de Exibição do Jogo Gerado -->
+              <div class="palpite-display-container">
+                <div id="palpite-balls" class="palpite-balls-grid">
+                  <!-- Bolas do palpite simulado -->
+                </div>
+              </div>
+
+              <!-- Detalhes do Jogo Gerado -->
+              <div class="game-analytics" id="game-analytics" style="display: none;">
+                <div class="analytic-item">
+                  <span class="analytic-label">Composição:</span>
+                  <span class="analytic-value" id="val-composition">-</span>
+                </div>
+                <div class="analytic-item">
+                  <span class="analytic-label">Paridade:</span>
+                  <span class="analytic-value" id="val-parity">-</span>
+                </div>
+                <div class="analytic-item">
+                  <span class="analytic-label">Distribuição:</span>
+                  <span class="analytic-value" id="val-distribution">-</span>
+                </div>
+              </div>
+
+              <!-- Controles do Gerador -->
+              <div class="generator-actions">
+                <button id="btn-generate" class="btn btn-primary" onclick="gerarPalpiteEstatistico()">
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67" />
+                  </svg>
+                  Gerar Jogo
+                </button>
+                
+                <button id="btn-copy" class="btn btn-secondary" onclick="copiarPalpite()" disabled>
+                  <svg id="copy-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                  </svg>
+                  <span id="copy-btn-text">Copiar Jogo</span>
+                </button>
+              </div>
+
+              <!-- Histórico de Palpites -->
+              <div class="historico-section">
+                <div class="historico-header" onclick="toggleHistorico()">
+                  <h3>Histórico de Palpites</h3>
+                  <span id="historico-toggle-icon">▼</span>
+                </div>
+                <div id="historico-lista" class="historico-lista" style="display: none;">
+                  <!-- Itens do histórico gerados pelo JS -->
+                </div>
+                <div class="historico-actions" id="historico-actions" style="display: none;">
+                  <button class="btn-micro" onclick="historicoManager.limpar(jogoAtivo)">Limpar</button>
+                  <button class="btn-micro" onclick="historicoManager.exportar(jogoAtivo)">Exportar</button>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+        </section>
+        
+      </main>
+
+      <!-- Rodapé do Painel -->
+      <footer class="dashboard-footer">
+        <p>© 2026 Agente Probabilístico Caixa. Desenvolvido para fins de análise estatística. Jogue com responsabilidade.</p>
+        <div class="status-indicator">
+          <span class="dot yellow" id="api-status-dot"></span>
+          <span id="api-status-text">Conectando API...</span>
+          <span style="margin: 0 8px; color: var(--border-light);">|</span>
+          <span class="dot green"></span>
+          <span id="footer-indicador-texto">Modelo Padrão: 3 pares / 3 ímpares</span>
+        </div>
+      </footer>
+      
+    </div>
+  </div>
+
+  <!-- Toast Notifications Container -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <!-- JavaScript -->
+  <script src="app.js?v=1.0.2"></script>
+</body>
+</html>

@@ -1,0 +1,35 @@
+{
+  "loterias": {
+    "Mega-Sena": {
+      "aposta_minima": {
+        "numeros": 6,
+        "valor": 6.00
+      },
+      "apostas_maiores": {
+        "7_numeros": 42.00,
+        "8_numeros": 168.00,
+        "9_numeros": 504.00,
+        "10_numeros": 1260.00,
+        "20_numeros": 232560.00
+      },
+      "bolao": {
+        "valor_minimo": 18.00,
+        "cota_minima": 7.00
+      }
+    },
+    "Quina": {
+      "aposta_minima": {
+        "numeros": 5,
+        "valor": 3.00
+      },
+      "apostas_maiores": "até 15 números, preço aumenta progressivamente"
+    },
+    "Lotofácil": {
+      "aposta_minima": {
+        "numeros": 15,
+        "valor": 3.50
+      },
+      "apostas_maiores": "até 20 números, preço aumenta progressivamente"
+    }
+  }
+}

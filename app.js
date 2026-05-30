@@ -535,7 +535,26 @@ function processarMensagemAgente(pergunta) {
     const principiosTexto = data.principios.map(p => `✦ ${p}`).join('\n');
     resposta = `Minha estratégia probabilística para a **${data.nome}** é baseada em:\n\n${principiosTexto}\n\nCombinando essa dispersão e paridade, conseguimos cobrir as faixas matemáticas com maior probabilidade histórica de sorteio!`;
   }
-  // 7. Prêmio e Estimativa
+  // 7. Preço da Aposta
+  else if (textoMinusculo.match(/(preço|preco|custa|custo|valor da aposta|valor do jogo|quanto pago|cobrado|pagar pela aposta)/)) {
+    let preco = "";
+    let extra = "";
+    if (jogoAtivo === 'mega') {
+      preco = "R$ 6,00 (aposta simples de 6 dezenas)";
+      extra = "Se quiser aumentar as chances: 7 números custa R$ 42,00, 8 números R$ 168,00, e assim por diante (até 20 números). O Bolão tem valor mínimo de R$ 18,00 (cota mínima R$ 7,00).";
+    }
+    else if (jogoAtivo === 'quina') {
+      preco = "R$ 3,00 (aposta simples de 5 dezenas)";
+      extra = "Você pode jogar até 15 números, e o preço aumenta progressivamente.";
+    }
+    else if (jogoAtivo === 'lotofacil') {
+      preco = "R$ 3,50 (aposta simples de 15 dezenas)";
+      extra = "Você pode jogar até 20 números, e o preço aumenta progressivamente.";
+    }
+    
+    resposta = `O valor atual da aposta para a **${data.nome}** é de **${preco}**.\n\n${extra}`;
+  }
+  // 8. Prêmio e Estimativa
   else if (textoMinusculo.match(/(prêmio|premio|acumulou|valor|estimado|estimativa|dinheiro|pagar|milhões|milhoes)/)) {
     if (window.ultimoResultadoCaixa && window.ultimoResultadoCaixa.valorEstimadoProximoConcurso) {
       const valorFmt = window.ultimoResultadoCaixa.valorEstimadoProximoConcurso.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
