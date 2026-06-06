@@ -8,24 +8,34 @@
         "Misturar dezenas quentes e frias",
         "Balancear pares e ímpares",
         "Distribuir dezenas entre faixas baixas (1-30) e altas (31-60)",
-        "Promover jogo responsável"
+        "Promover jogo responsável",
+        "Considerar dezenas atrasadas e repetidas",
+        "Avaliar sequências e quadrantes"
       ]
     },
     "loterias": {
       "mega_sena": {
         "estatisticas": {
           "quentes": [18, 60, 37, 12, 29, 28, 58, 36, 16, 44],
-          "frias": [24, 45, 42, 27, 3, 9, 10, 55, 2, 38]
+          "frias": [24, 45, 42, 27, 3, 9, 10, 55, 2, 38],
+          "atrasadas": [7, 19, 33, 46, 52],
+          "repetidas": [27, 30, 35, 40, 44, 58]
         },
         "estrategias": {
           "balanceamento": "2 quentes + 2 médias + 2 frias",
           "pares_impares": "3 pares e 3 ímpares",
-          "faixas": "3 dezenas entre 1-30 e 3 dezenas entre 31-60"
+          "faixas": "3 dezenas entre 1-30 e 3 dezenas entre 31-60",
+          "extras": [
+            "1 atrasada",
+            "1 repetida",
+            "evitar mais de 2 sequências",
+            "distribuir entre quadrantes do volante"
+          ]
         },
         "palpites_exemplo": [
-          [18, 60, 24, 45, 12, 29],
-          [37, 28, 42, 27, 16, 44],
-          [58, 36, 3, 9, 10, 55]
+          [18, 60, 24, 45, 7, 27],
+          [37, 28, 42, 33, 16, 44],
+          [58, 36, 3, 9, 52, 40]
         ]
       }
     }

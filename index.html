@@ -114,7 +114,7 @@
             <!-- Separador -->
             <div class="divider"></div>
 
-            <!-- Seção de Frequência de Dezenas (Quentes / Frias) -->
+            <!-- Seção de Frequência de Dezenas -->
             <div class="frequency-section">
               <div class="frequency-column">
                 <h3 class="title-hot">Quentes <span class="badge badge-hot">Mais Sorteadas</span></h3>
@@ -128,6 +128,16 @@
                 <div id="cold-numbers" class="numbers-display">
                   <!-- Bolas geradas pelo JS -->
                 </div>
+              </div>
+
+              <div class="frequency-column" id="col-atrasadas" style="display: none;">
+                <h3 class="title-atrasadas" style="color: #ff5555;">Atrasadas <span class="badge" style="background: rgba(255,85,85,0.15); color: #ff5555; border: 1px solid rgba(255,85,85,0.25);">Alerta</span></h3>
+                <div id="atrasadas-numbers" class="numbers-display"></div>
+              </div>
+              
+              <div class="frequency-column" id="col-repetidas" style="display: none;">
+                <h3 class="title-repetidas" style="color: #b855ff;">Repetidas <span class="badge" style="background: rgba(184,85,255,0.15); color: #b855ff; border: 1px solid rgba(184,85,255,0.25);">Atenção</span></h3>
+                <div id="repetidas-numbers" class="numbers-display"></div>
               </div>
             </div>
 

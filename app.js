@@ -11,6 +11,8 @@ const loteriasData = {
     diasSorteio: "terças, quintas e sábados",
     quentes: [18, 60, 37, 12, 29, 28, 58, 36, 16, 44],
     frias: [24, 45, 42, 27, 3, 9, 10, 55, 2, 38],
+    atrasadas: [7, 19, 33, 46, 52],
+    repetidas: [27, 30, 35, 40, 44, 58],
     principios: [
       "Composição: 2 quentes, 2 médias e 2 frias",
       "Paridade: Exatamente 3 dezenas pares e 3 ímpares",
@@ -23,7 +25,8 @@ const loteriasData = {
     // Algoritmo específico de geração Mega-Sena
     gerar: function(medias) {
       let tentativas = 0;
-      while (tentativas < 5000) {
+      // Aumentei o limite de tentativas porque as regras agora são muito mais rígidas
+      while (tentativas < 15000) {
         tentativas++;
         let dezenas = [];
         
@@ -43,15 +46,42 @@ const loteriasData = {
         // Validação de Faixas: Exatamente 3 entre 1-30 e 3 entre 31-60
         let primeiraMetade = dezenas.filter(n => n <= 30).length;
         if (primeiraMetade !== 3) continue;
+
+        // NOVA REGRA: Pelo menos 1 atrasada e 1 repetida no jogo
+        let hasAtrasada = dezenas.some(n => this.atrasadas.includes(n));
+        let hasRepetida = dezenas.some(n => this.repetidas.includes(n));
+        if (!hasAtrasada || !hasRepetida) continue;
         
         // Sucesso: ordena e categoriza
         dezenas.sort((a, b) => a - b);
+
+        // NOVA REGRA: Evitar mais de 2 sequências (3 números seguidos)
+        let hasSeq3 = false;
+        for (let i = 0; i < dezenas.length - 2; i++) {
+          if (dezenas[i] + 1 === dezenas[i+1] && dezenas[i+1] + 1 === dezenas[i+2]) {
+            hasSeq3 = true; 
+            break;
+          }
+        }
+        if (hasSeq3) continue;
+
+        // NOVA REGRA: Distribuir entre quadrantes do volante (exigir pelo menos 3 quadrantes diferentes)
+        // Volante Mega-Sena: Q1 (linhas 1-3, col 1-5), Q2 (linhas 1-3, col 6-10), Q3 (linhas 4-6, col 1-5), Q4 (linhas 4-6, col 6-10)
+        let quadrantes = new Set();
+        dezenas.forEach(n => {
+           let col = (n - 1) % 10 + 1;
+           let row = Math.floor((n - 1) / 10) + 1;
+           let quad = (row <= 3 ? 1 : 3) + (col <= 5 ? 0 : 1);
+           quadrantes.add(quad);
+        });
+        if (quadrantes.size < 3) continue;
+
         return {
           numeros: dezenas,
           detalhes: {
-            composição: "2 Quentes, 2 Médias, 2 Frias",
-            paridade: "3 Pares / 3 Ímpares",
-            distribuição: "3 Faixa Baixa / 3 Faixa Alta"
+            composição: "2Q, 2M, 2F (c/ Atrasada e Repetida)",
+            paridade: "3 Pares / 3 Ímpares (Sem Seq.)",
+            distribuição: `3 Bx / 3 Al (${quadrantes.size} Quadrantes)`
           }
         };
       }
@@ -65,6 +95,8 @@ const loteriasData = {
     diasSorteio: "segunda a sábado",
     quentes: [3, 15, 47, 62, 79, 10, 26, 33, 4, 18],
     frias: [1, 5, 12, 29, 74, 8, 19, 41, 55, 80],
+    atrasadas: [2, 14, 38, 51, 76],
+    repetidas: [15, 26, 41, 62],
     principios: [
       "Composição: 2 quentes, 1 média e 2 frias",
       "Paridade: Balanceamento de 3 pares/2 ímpares ou 2 pares/3 ímpares",
@@ -76,7 +108,7 @@ const loteriasData = {
     indicadorTexto: "Modelo Padrão: 3 pares / 2 ímpares ou vice-versa",
     gerar: function(medias) {
       let tentativas = 0;
-      while (tentativas < 5000) {
+      while (tentativas < 15000) {
         tentativas++;
         let dezenas = [];
         
@@ -86,21 +118,41 @@ const loteriasData = {
         
         dezenas = [...q, ...f, ...m];
         
-        // Validação de Paridade: 3 pares e 2 ímpares OU 2 pares e 3 ímpares
         let pares = dezenas.filter(n => n % 2 === 0).length;
         if (pares !== 2 && pares !== 3) continue;
         
-        // Validação de Faixas: 3 na faixa 1-40 e 2 na 41-80 (ou vice-versa)
         let primeiraMetade = dezenas.filter(n => n <= 40).length;
         if (primeiraMetade !== 2 && primeiraMetade !== 3) continue;
         
+        let hasAtrasada = dezenas.some(n => this.atrasadas.includes(n));
+        let hasRepetida = dezenas.some(n => this.repetidas.includes(n));
+        if (!hasAtrasada || !hasRepetida) continue;
+
         dezenas.sort((a, b) => a - b);
+
+        let hasSeq3 = false;
+        for (let i = 0; i < dezenas.length - 2; i++) {
+          if (dezenas[i] + 1 === dezenas[i+1] && dezenas[i+1] + 1 === dezenas[i+2]) {
+            hasSeq3 = true; break;
+          }
+        }
+        if (hasSeq3) continue;
+
+        let quadrantes = new Set();
+        dezenas.forEach(n => {
+           let col = (n - 1) % 10 + 1;
+           let row = Math.floor((n - 1) / 10) + 1;
+           let quad = (row <= 4 ? 1 : 3) + (col <= 5 ? 0 : 1);
+           quadrantes.add(quad);
+        });
+        if (quadrantes.size < 3) continue;
+
         return {
           numeros: dezenas,
           detalhes: {
-            composição: "2 Quentes, 1 Média, 2 Frias",
-            paridade: `${pares} Pares / ${5 - pares} Ímpares`,
-            distribuição: `${primeiraMetade} Faixa Baixa / ${5 - primeiraMetade} Faixa Alta`
+            composição: "2Q, 1M, 2F (c/ Atrasada e Repetida)",
+            paridade: `${pares}P / ${5 - pares}I (Sem Seq.)`,
+            distribuição: `${primeiraMetade}Bx / ${5 - primeiraMetade}Al (${quadrantes.size} Quad)`
           }
         };
       }
@@ -114,6 +166,8 @@ const loteriasData = {
     diasSorteio: "segunda a sábado",
     quentes: [1, 2, 13, 14, 20, 3, 11, 15, 18, 22, 24],
     frias: [7, 8, 19, 21, 25, 5, 9, 16, 17],
+    atrasadas: [4, 10, 23, 6],
+    repetidas: [1, 13, 14, 20, 11],
     principios: [
       "Composição: 8 quentes, 4 médias e 3 frias",
       "Paridade: Balanceamento clássico de 8 ímpares/7 pares ou vice-versa",
@@ -125,7 +179,7 @@ const loteriasData = {
     indicadorTexto: "Modelo Padrão: 8 ímpares / 7 pares ou vice-versa",
     gerar: function(medias) {
       let tentativas = 0;
-      while (tentativas < 5000) {
+      while (tentativas < 15000) {
         tentativas++;
         let dezenas = [];
         
@@ -135,21 +189,43 @@ const loteriasData = {
         
         dezenas = [...q, ...f, ...m];
         
-        // Validação de Paridade: 8 ímpares e 7 pares OU 7 ímpares e 8 pares
         let pares = dezenas.filter(n => n % 2 === 0).length;
         if (pares !== 7 && pares !== 8) continue;
         
-        // Validação de Faixas: 8 na faixa 1-13 e 7 na 14-25 (ou vice-versa)
         let primeiraMetade = dezenas.filter(n => n <= 13).length;
         if (primeiraMetade !== 7 && primeiraMetade !== 8) continue;
         
+        let hasAtrasada = dezenas.filter(n => this.atrasadas.includes(n)).length >= 1;
+        let hasRepetida = dezenas.filter(n => this.repetidas.includes(n)).length >= 2;
+        if (!hasAtrasada || !hasRepetida) continue;
+
         dezenas.sort((a, b) => a - b);
+
+        let seqLongo = false;
+        let seqCount = 1;
+        for (let i = 0; i < dezenas.length - 1; i++) {
+          if (dezenas[i] + 1 === dezenas[i+1]) {
+            seqCount++;
+            if (seqCount >= 7) { seqLongo = true; break; }
+          } else {
+            seqCount = 1;
+          }
+        }
+        if (seqLongo) continue;
+
+        let linhas = new Set();
+        dezenas.forEach(n => {
+           let row = Math.floor((n - 1) / 5) + 1;
+           linhas.add(row);
+        });
+        if (linhas.size < 5) continue; // Exige números em todas as 5 linhas
+
         return {
           numeros: dezenas,
           detalhes: {
-            composição: "8 Quentes, 4 Médias, 3 Frias",
-            paridade: `${pares} Pares / ${15 - pares} Ímpares`,
-            distribuição: `${primeiraMetade} Faixa Baixa / ${15 - primeiraMetade} Faixa Alta`
+            composição: "8Q, 4M, 3F (Atr+Rep)",
+            paridade: `${pares}P / ${15 - pares}I (S/ Seq>6)`,
+            distribuição: `Todas 5 Linhas Ativas`
           }
         };
       }
@@ -239,6 +315,16 @@ function selecionarJogo(jogo) {
   // 4. Renderizar Dezenas Quentes e Frias
   renderizarBolasFrequencia(data.quentes, 'hot-numbers', 'ball-hot');
   renderizarBolasFrequencia(data.frias, 'cold-numbers', 'ball-cold');
+
+  if (data.atrasadas && data.repetidas) {
+    document.getElementById('col-atrasadas').style.display = 'block';
+    document.getElementById('col-repetidas').style.display = 'block';
+    renderizarBolasFrequencia(data.atrasadas, 'atrasadas-numbers', 'ball-hot'); // usa os mesmos estilos para manter design
+    renderizarBolasFrequencia(data.repetidas, 'repetidas-numbers', 'ball-cold');
+  } else {
+    document.getElementById('col-atrasadas').style.display = 'none';
+    document.getElementById('col-repetidas').style.display = 'none';
+  }
 
   // 5. Limpar área do palpite gerado anteriormente
   document.getElementById('palpite-balls').innerHTML = `
