@@ -1195,17 +1195,21 @@ body {
 
 @media (max-width: 600px) {
   body {
-    padding: 10px;
+    padding: 6px;
   }
 
   .lottery-nav {
-    flex-direction: column;
+    flex-direction: row;
+    flex-wrap: wrap;
     width: 100%;
   }
 
   .nav-btn {
-    width: 100%;
+    flex: 1;
+    min-width: 100px;
     justify-content: center;
+    padding: 8px 10px;
+    font-size: 0.82rem;
   }
 
   .frequency-section {
@@ -1217,10 +1221,31 @@ body {
     gap: 8px;
   }
 
+  .ball-palpite {
+    width: 38px;
+    height: 38px;
+    font-size: 1rem;
+  }
+
+  .ball {
+    width: 32px;
+    height: 32px;
+    font-size: 0.85rem;
+  }
+
+  .lotofacil-tabs-nav {
+    gap: 4px;
+  }
+
+  .tab-sub-btn {
+    padding: 5px 8px !important;
+    font-size: 0.72rem !important;
+  }
+
   .dashboard-footer {
     flex-direction: column;
     gap: 10px;
     text-align: center;
-    padding: 20px;
+    padding: 15px;
   }
 }
