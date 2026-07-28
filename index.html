@@ -1,19 +1,22 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Agente Probabilístico - Loterias Caixa</title>
-  <meta name="description" content="Gere palpites probabilísticos inteligentes e analise estatísticas de dezenas quentes e frias para Mega-Sena, Quina e Lotofácil.">
-  
+  <meta name="description"
+    content="Gere palpites probabilísticos inteligentes e analise estatísticas de dezenas quentes e frias para Mega-Sena, Quina e Lotofácil.">
+
   <!-- Google Fonts - Outfit -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800;900&display=swap" rel="stylesheet">
-  
+
   <!-- CSS Stylesheet -->
   <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
   <!-- Título principal oculto para SEO e leitores de tela -->
@@ -21,12 +24,13 @@
 
   <div class="app-wrapper">
     <div class="dashboard-container" id="dashboardContainer">
-      
+
       <!-- Cabeçalho do Painel -->
       <header class="dashboard-header">
         <div class="logo-area">
           <div class="logo-icon">
-            <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2.5"
+              stroke-linecap="round" stroke-linejoin="round">
               <path d="M16 16v1a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2v1" />
               <path d="M18 8h4a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2h-4" />
               <circle cx="8" cy="12" r="2" />
@@ -37,7 +41,7 @@
             <span class="logo-subtitle">Módulo de Análise Probabilística</span>
           </div>
         </div>
-        
+
         <!-- Menu de Seleção de Loterias -->
         <nav class="lottery-nav" aria-label="Seleção de Loteria">
           <button id="btn-mega" class="nav-btn active" onclick="selecionarJogo('mega')" aria-selected="true">
@@ -57,12 +61,13 @@
 
       <!-- Área do Desenho (Exibição da Imagem Original sem sobreposição) -->
       <div class="dashboard-visual-area">
-        <img src="dashboard-agente-probabilistico.png" alt="Painel Visual Agente Probabilístico" class="dashboard-visual-image">
+        <img src="dashboard-agente-probabilistico.png" alt="Painel Visual Agente Probabilístico"
+          class="dashboard-visual-image">
       </div>
 
       <!-- Conteúdo Principal: Painel Único Compacto na Base -->
       <main class="dashboard-content">
-        
+
         <section class="main-panel panel-glass">
 
           <!-- Coluna Esquerda: Painel do Agente -->
@@ -82,9 +87,11 @@
                 <!-- Mensagens geradas dinamicamente pelo JS -->
               </div>
               <div class="chat-input-area">
-                <input type="text" id="chat-input" placeholder="Pergunte ao Consultor..." onkeydown="if(event.key === 'Enter') enviarMensagemChat()">
+                <input type="text" id="chat-input" placeholder="Pergunte ao Consultor..."
+                  onkeydown="if(event.key === 'Enter') enviarMensagemChat()">
                 <button id="btn-send-chat" onclick="enviarMensagemChat()" aria-label="Enviar mensagem">
-                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"
+                    stroke-linecap="round" stroke-linejoin="round">
                     <line x1="22" y1="2" x2="11" y2="13"></line>
                     <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
                   </svg>
@@ -99,7 +106,8 @@
             <!-- Seção do Último Resultado Oficial -->
             <div class="resultado-section" id="ultimo-resultado" style="display: none;">
               <div class="resultado-header">
-                <h3>Último Sorteio <span id="res-concurso" class="badge" style="background: rgba(255,255,255,0.1);"></span></h3>
+                <h3>Último Sorteio <span id="res-concurso" class="badge"
+                    style="background: rgba(255,255,255,0.1);"></span></h3>
                 <span class="resultado-data" id="res-data"></span>
               </div>
               <div id="res-bolas" class="numbers-display" style="min-height: auto; margin-bottom: 10px;">
@@ -122,7 +130,7 @@
                   <!-- Bolas geradas pelo JS -->
                 </div>
               </div>
-              
+
               <div class="frequency-column">
                 <h3 class="title-cold">Frias <span class="badge badge-cold">Atrasadas</span></h3>
                 <div id="cold-numbers" class="numbers-display">
@@ -131,12 +139,16 @@
               </div>
 
               <div class="frequency-column" id="col-atrasadas" style="display: none;">
-                <h3 class="title-atrasadas" style="color: #ff5555;">Atrasadas <span class="badge" style="background: rgba(255,85,85,0.15); color: #ff5555; border: 1px solid rgba(255,85,85,0.25);">Alerta</span></h3>
+                <h3 class="title-atrasadas" style="color: #ff5555;">Atrasadas <span class="badge"
+                    style="background: rgba(255,85,85,0.15); color: #ff5555; border: 1px solid rgba(255,85,85,0.25);">Alerta</span>
+                </h3>
                 <div id="atrasadas-numbers" class="numbers-display"></div>
               </div>
-              
+
               <div class="frequency-column" id="col-repetidas" style="display: none;">
-                <h3 class="title-repetidas" style="color: #b855ff;">Repetidas <span class="badge" style="background: rgba(184,85,255,0.15); color: #b855ff; border: 1px solid rgba(184,85,255,0.25);">Atenção</span></h3>
+                <h3 class="title-repetidas" style="color: #b855ff;">Repetidas <span class="badge"
+                    style="background: rgba(184,85,255,0.15); color: #b855ff; border: 1px solid rgba(184,85,255,0.25);">Atenção</span>
+                </h3>
                 <div id="repetidas-numbers" class="numbers-display"></div>
               </div>
             </div>
@@ -177,14 +189,16 @@
               <!-- Controles do Gerador -->
               <div class="generator-actions">
                 <button id="btn-generate" class="btn btn-primary" onclick="gerarPalpiteEstatistico()">
-                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
                     <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67" />
                   </svg>
                   Gerar Jogo
                 </button>
-                
+
                 <button id="btn-copy" class="btn btn-secondary" onclick="copiarPalpite()" disabled>
-                  <svg id="copy-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <svg id="copy-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"
+                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
                     <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
                   </svg>
@@ -211,12 +225,13 @@
           </div>
 
         </section>
-        
+
       </main>
 
       <!-- Rodapé do Painel -->
       <footer class="dashboard-footer">
-        <p>© 2026 Agente Probabilístico Caixa. Desenvolvido para fins de análise estatística. Jogue com responsabilidade.</p>
+        <p>© 2026 Agente Probabilístico Caixa. Desenvolvido para fins de análise estatística. Jogue com
+          responsabilidade.</p>
         <div class="status-indicator">
           <span class="dot yellow" id="api-status-dot"></span>
           <span id="api-status-text">Conectando API...</span>
@@ -225,7 +240,7 @@
           <span id="footer-indicador-texto">Modelo Padrão: 3 pares / 3 ímpares</span>
         </div>
       </footer>
-      
+
     </div>
   </div>
 
@@ -235,4 +250,5 @@
   <!-- JavaScript -->
   <script src="app.js?v=1.0.2"></script>
 </body>
+
 </html>

@@ -48,7 +48,9 @@ import subprocess
 LOTERIAS_MAP = {
     "mega": "megasena",
     "quina": "quina",
-    "lotofacil": "lotofacil"
+    "lotofacil": "lotofacil",
+    "milionaria": "maismilionaria",
+    "maismilionaria": "maismilionaria"
 }
 
 @app.get("/api/test-headers")
@@ -113,6 +115,15 @@ def obter_ultimo_resultado(jogo: str):
         response = requests_cffi.get(url, headers=headers, impersonate="chrome", verify=False, timeout=15)
         response.raise_for_status()
         data = response.json()
+        if "listaRateioPremio" in data and "premiacao" not in data:
+            data["premiacao"] = [
+                {
+                    "nome": item.get("descricaoFaixa", ""),
+                    "quantidadeGanhadores": item.get("numeroDeGanhadores", 0),
+                    "valorPremio": item.get("valorPremio", 0.0)
+                }
+                for item in data.get("listaRateioPremio", [])
+            ]
         
         # Salva no cache
         set_in_cache(cache_key, data)

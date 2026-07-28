@@ -23,26 +23,26 @@ const loteriasData = {
     qtdDezenas: 6,
     indicadorTexto: "Modelo Padrão: 3 pares / 3 ímpares",
     // Algoritmo específico de geração Mega-Sena
-    gerar: function(medias) {
+    gerar: function (medias) {
       let tentativas = 0;
       // Aumentei o limite de tentativas porque as regras agora são muito mais rígidas
       while (tentativas < 15000) {
         tentativas++;
         let dezenas = [];
-        
+
         // Selecionar 2 quentes
         let q = selecionarAleatorios(this.quentes, 2);
         // Selecionar 2 frias
         let f = selecionarAleatorios(this.frias, 2);
         // Selecionar 2 médias
         let m = selecionarAleatorios(medias, 2);
-        
+
         dezenas = [...q, ...f, ...m];
-        
+
         // Validação de Paridade: Exatamente 3 pares e 3 ímpares
         let pares = dezenas.filter(n => n % 2 === 0).length;
         if (pares !== 3) continue;
-        
+
         // Validação de Faixas: Exatamente 3 entre 1-30 e 3 entre 31-60
         let primeiraMetade = dezenas.filter(n => n <= 30).length;
         if (primeiraMetade !== 3) continue;
@@ -51,15 +51,15 @@ const loteriasData = {
         let hasAtrasada = dezenas.some(n => this.atrasadas.includes(n));
         let hasRepetida = dezenas.some(n => this.repetidas.includes(n));
         if (!hasAtrasada || !hasRepetida) continue;
-        
+
         // Sucesso: ordena e categoriza
         dezenas.sort((a, b) => a - b);
 
         // NOVA REGRA: Evitar mais de 2 sequências (3 números seguidos)
         let hasSeq3 = false;
         for (let i = 0; i < dezenas.length - 2; i++) {
-          if (dezenas[i] + 1 === dezenas[i+1] && dezenas[i+1] + 1 === dezenas[i+2]) {
-            hasSeq3 = true; 
+          if (dezenas[i] + 1 === dezenas[i + 1] && dezenas[i + 1] + 1 === dezenas[i + 2]) {
+            hasSeq3 = true;
             break;
           }
         }
@@ -69,10 +69,10 @@ const loteriasData = {
         // Volante Mega-Sena: Q1 (linhas 1-3, col 1-5), Q2 (linhas 1-3, col 6-10), Q3 (linhas 4-6, col 1-5), Q4 (linhas 4-6, col 6-10)
         let quadrantes = new Set();
         dezenas.forEach(n => {
-           let col = (n - 1) % 10 + 1;
-           let row = Math.floor((n - 1) / 10) + 1;
-           let quad = (row <= 3 ? 1 : 3) + (col <= 5 ? 0 : 1);
-           quadrantes.add(quad);
+          let col = (n - 1) % 10 + 1;
+          let row = Math.floor((n - 1) / 10) + 1;
+          let quad = (row <= 3 ? 1 : 3) + (col <= 5 ? 0 : 1);
+          quadrantes.add(quad);
         });
         if (quadrantes.size < 3) continue;
 
@@ -106,24 +106,24 @@ const loteriasData = {
     maxNumero: 80,
     qtdDezenas: 5,
     indicadorTexto: "Modelo Padrão: 3 pares / 2 ímpares ou vice-versa",
-    gerar: function(medias) {
+    gerar: function (medias) {
       let tentativas = 0;
       while (tentativas < 15000) {
         tentativas++;
         let dezenas = [];
-        
+
         let q = selecionarAleatorios(this.quentes, 2);
         let f = selecionarAleatorios(this.frias, 2);
         let m = selecionarAleatorios(medias, 1);
-        
+
         dezenas = [...q, ...f, ...m];
-        
+
         let pares = dezenas.filter(n => n % 2 === 0).length;
         if (pares !== 2 && pares !== 3) continue;
-        
+
         let primeiraMetade = dezenas.filter(n => n <= 40).length;
         if (primeiraMetade !== 2 && primeiraMetade !== 3) continue;
-        
+
         let hasAtrasada = dezenas.some(n => this.atrasadas.includes(n));
         let hasRepetida = dezenas.some(n => this.repetidas.includes(n));
         if (!hasAtrasada || !hasRepetida) continue;
@@ -132,7 +132,7 @@ const loteriasData = {
 
         let hasSeq3 = false;
         for (let i = 0; i < dezenas.length - 2; i++) {
-          if (dezenas[i] + 1 === dezenas[i+1] && dezenas[i+1] + 1 === dezenas[i+2]) {
+          if (dezenas[i] + 1 === dezenas[i + 1] && dezenas[i + 1] + 1 === dezenas[i + 2]) {
             hasSeq3 = true; break;
           }
         }
@@ -140,10 +140,10 @@ const loteriasData = {
 
         let quadrantes = new Set();
         dezenas.forEach(n => {
-           let col = (n - 1) % 10 + 1;
-           let row = Math.floor((n - 1) / 10) + 1;
-           let quad = (row <= 4 ? 1 : 3) + (col <= 5 ? 0 : 1);
-           quadrantes.add(quad);
+          let col = (n - 1) % 10 + 1;
+          let row = Math.floor((n - 1) / 10) + 1;
+          let quad = (row <= 4 ? 1 : 3) + (col <= 5 ? 0 : 1);
+          quadrantes.add(quad);
         });
         if (quadrantes.size < 3) continue;
 
@@ -161,50 +161,51 @@ const loteriasData = {
   },
   lotofacil: {
     nome: "Lotofácil",
-    subtitulo: "Módulo Lotofácil 25 Dezenas",
+    subtitulo: "Módulo Lotofácil (Base: 3.745 Concursos)",
     horaSorteio: "20h (horário de Brasília)",
     diasSorteio: "segunda a sábado",
-    quentes: [1, 2, 13, 14, 20, 3, 11, 15, 18, 22, 24],
-    frias: [7, 8, 19, 21, 25, 5, 9, 16, 17],
-    atrasadas: [4, 10, 23, 6],
-    repetidas: [1, 13, 14, 20, 11],
+    quentes: [20, 10, 25, 11, 13, 24, 1, 14, 4, 5],
+    frias: [16, 8, 23, 17, 6, 7, 21, 19, 18, 9],
+    atrasadas: [3, 12, 15, 22],
+    repetidas: [1, 2, 4, 5, 6, 7, 8, 9, 10, 12, 13, 19, 21, 22, 24],
     principios: [
-      "Composição: 8 quentes, 4 médias e 3 frias",
-      "Paridade: Balanceamento clássico de 8 ímpares/7 pares ou vice-versa",
-      "Dispersão: 8 dezenas na faixa 1-13 e 7 na faixa 14-25 (ou vice-versa)",
-      "Algoritmo de cobertura ampla de quadrantes estatísticos"
+      "Base Analítica: Histórico completo de 3.745 concursos",
+      "Composição: 8 quentes (top 10), 4 médias e 3 frias",
+      "Repetidas: 8 a 10 dezenas repetidas do concurso anterior (média 9.15)",
+      "Paridade: 8 ímpares / 7 pares ou 7 ímpares / 8 pares",
+      "Cobertura: Dezenas distribuídas em todas as 5 linhas do volante"
     ],
     maxNumero: 25,
     qtdDezenas: 15,
-    indicadorTexto: "Modelo Padrão: 8 ímpares / 7 pares ou vice-versa",
-    gerar: function(medias) {
+    indicadorTexto: "Modelo 3.745 Concursos: 8-10 Repetidas | 8-7 Paridade | 5 Linhas",
+    gerar: function (medias) {
       let tentativas = 0;
       while (tentativas < 15000) {
         tentativas++;
         let dezenas = [];
-        
+
         let q = selecionarAleatorios(this.quentes, 8);
         let f = selecionarAleatorios(this.frias, 3);
         let m = selecionarAleatorios(medias, 4);
-        
+
         dezenas = [...q, ...f, ...m];
-        
+
         let pares = dezenas.filter(n => n % 2 === 0).length;
         if (pares !== 7 && pares !== 8) continue;
-        
+
         let primeiraMetade = dezenas.filter(n => n <= 13).length;
         if (primeiraMetade !== 7 && primeiraMetade !== 8) continue;
-        
-        let hasAtrasada = dezenas.filter(n => this.atrasadas.includes(n)).length >= 1;
-        let hasRepetida = dezenas.filter(n => this.repetidas.includes(n)).length >= 2;
-        if (!hasAtrasada || !hasRepetida) continue;
+
+        // Trava de Repetidas do Concurso Anterior (8 a 10 repetidas)
+        let qtdRep = dezenas.filter(n => this.repetidas.includes(n)).length;
+        if (qtdRep < 8 || qtdRep > 10) continue;
 
         dezenas.sort((a, b) => a - b);
 
         let seqLongo = false;
         let seqCount = 1;
         for (let i = 0; i < dezenas.length - 1; i++) {
-          if (dezenas[i] + 1 === dezenas[i+1]) {
+          if (dezenas[i] + 1 === dezenas[i + 1]) {
             seqCount++;
             if (seqCount >= 7) { seqLongo = true; break; }
           } else {
@@ -215,8 +216,8 @@ const loteriasData = {
 
         let linhas = new Set();
         dezenas.forEach(n => {
-           let row = Math.floor((n - 1) / 5) + 1;
-           linhas.add(row);
+          let row = Math.floor((n - 1) / 5) + 1;
+          linhas.add(row);
         });
         if (linhas.size < 5) continue; // Exige números em todas as 5 linhas
 
@@ -276,7 +277,7 @@ window.addEventListener('DOMContentLoaded', () => {
 function selecionarJogo(jogo) {
   jogoAtivo = jogo;
   const data = loteriasData[jogo];
-  
+
   // 1. Atualizar Botões do Menu
   document.querySelectorAll('.nav-btn').forEach(btn => {
     btn.classList.remove('active');
@@ -293,22 +294,22 @@ function selecionarJogo(jogo) {
   if (agentNameEl) {
     agentNameEl.innerHTML = `Consultor ${data.nome} <span style="font-size: 0.72rem; font-weight: 500; color: var(--text-secondary); display: block; margin-top: 5px; letter-spacing: 0.5px; text-transform: uppercase;">Atualizado em: ${obterDataFormatadaCurta()}</span>`;
   }
-  
+
   const statusText = document.getElementById('agent-status-text');
   if (statusText) {
     statusText.textContent = `Análise ${data.nome} Ativa`;
   }
-  
+
   // 3. Inicializar Chat com Mensagem de Boas-vindas Personalizada e Data do Sistema
   const chatMessages = document.getElementById('chat-messages');
   if (chatMessages) {
     chatMessages.innerHTML = ''; // Limpa mensagens anteriores
     const hojeStr = obterDataFormatada();
     const temSorteio = verificarSorteioHoje(jogo);
-    const avisoSorteio = temSorteio 
-      ? `🍀 **Hoje é ${hojeStr} e TEM SORTEIO da ${data.nome} às ${data.horaSorteio}!**` 
+    const avisoSorteio = temSorteio
+      ? `🍀 **Hoje é ${hojeStr} e TEM SORTEIO da ${data.nome} às ${data.horaSorteio}!**`
       : `📅 **Hoje é ${hojeStr}.** (Não há sorteio regular agendado para hoje. Próximos sorteios: ${data.diasSorteio} às ${data.horaSorteio}.)`;
-      
+
     adicionarMensagemChat('agente', `Olá! Sou seu **Consultor Probabilístico para a ${data.nome}**.\n\n${avisoSorteio}\n\nComo posso ajudar você hoje?\n\nPergunte-me coisas como:\n✦ *"Me dê um palpite"* \n✦ *"Hoje tem sorteio?"*\n✦ *"Quais são as dezenas quentes?"*\n✦ *"Qual a sua estratégia?"*`);
   }
 
@@ -331,7 +332,7 @@ function selecionarJogo(jogo) {
     <span class="placeholder-text" style="color: var(--text-secondary); font-size: 0.85rem;">Clique em "Gerar Jogo" ou peça ao Consultor via chat para rodar o algoritmo probabilístico.</span>
   `;
   document.getElementById('game-analytics').style.display = 'none';
-  
+
   // Desabilitar botão de copiar
   const btnCopy = document.getElementById('btn-copy');
   if (btnCopy) btnCopy.disabled = true;
@@ -341,7 +342,7 @@ function selecionarJogo(jogo) {
   // 6. Atualizar indicador de rodapé
   const statusIndicator = document.getElementById('footer-indicador-texto');
   if (statusIndicator) statusIndicator.textContent = data.indicadorTexto;
-  
+
   // 7. Carregar dados da API (se disponível) e Histórico
   if (typeof ApiService !== 'undefined') {
     ApiService.carregarUltimoResultado(jogo);
@@ -355,10 +356,10 @@ function selecionarJogo(jogo) {
 function renderizarBolasFrequencia(numeros, containerId, classeBola) {
   const container = document.getElementById(containerId);
   container.innerHTML = '';
-  
+
   // Ordena para fins de visualização organizada
   const ordenados = [...numeros].sort((a, b) => a - b);
-  
+
   ordenados.forEach(num => {
     const bola = document.createElement('div');
     bola.className = `ball ${classeBola}`;
@@ -372,7 +373,7 @@ function gerarPalpiteEstatistico() {
   const data = loteriasData[jogoAtivo];
   const medias = obterDezenasMedias(data);
   const btnGenerate = document.getElementById('btn-generate');
-  
+
   // Efeito visual de loading no botão
   btnGenerate.disabled = true;
   btnGenerate.innerHTML = `
@@ -392,11 +393,11 @@ function gerarPalpiteEstatistico() {
   // Simular processamento da IA/Probabilidade com atraso para estética de análise
   setTimeout(() => {
     const palpite = data.gerar(medias);
-    
+
     if (palpite) {
       palpiteAtual = palpite.numeros;
       exibirPalpiteComAnimacao(palpite);
-      
+
       if (typeof historicoManager !== 'undefined') {
         historicoManager.salvar(jogoAtivo, palpiteAtual, palpite.detalhes);
         mostrarToast('Palpite gerado e salvo!', 'success');
@@ -407,7 +408,7 @@ function gerarPalpiteEstatistico() {
       `;
       if (typeof mostrarToast !== 'undefined') mostrarToast('Erro ao gerar palpite.', 'error');
     }
-    
+
     // Restaurar botão de gerar
     btnGenerate.disabled = false;
     btnGenerate.innerHTML = `
@@ -423,14 +424,14 @@ function gerarPalpiteEstatistico() {
 function exibirPalpiteComAnimacao(palpite) {
   const container = document.getElementById('palpite-balls');
   container.innerHTML = '';
-  
+
   const data = loteriasData[jogoAtivo];
   const quentesSet = new Set(data.quentes);
   const friasSet = new Set(data.frias);
-  
+
   palpite.numeros.forEach((num, index) => {
     const bola = document.createElement('div');
-    
+
     // Classifica a bola para definir cores diferentes no palpite
     let classeTipo = 'medium';
     if (quentesSet.has(num)) {
@@ -438,25 +439,25 @@ function exibirPalpiteComAnimacao(palpite) {
     } else if (friasSet.has(num)) {
       classeTipo = 'cold';
     }
-    
+
     bola.className = `ball-palpite ${classeTipo}`;
     bola.textContent = formatarNumero(num);
-    
+
     // Ajusta o atraso da animação de cada bola para que surjam uma a uma
     bola.style.animationDelay = `${index * 100}ms`;
-    
+
     container.appendChild(bola);
   });
-  
+
   // Renderiza detalhes estatísticos do palpite gerado
   document.getElementById('val-composition').textContent = palpite.detalhes.composição;
   document.getElementById('val-parity').textContent = palpite.detalhes.paridade;
   document.getElementById('val-distribution').textContent = palpite.detalhes.distribuição;
-  
+
   // Exibe a seção de dados do palpite com fade
   const analyticsDiv = document.getElementById('game-analytics');
   analyticsDiv.style.display = 'grid';
-  
+
   // Habilita botão de copiar
   const btnCopy = document.getElementById('btn-copy');
   btnCopy.disabled = false;
@@ -466,17 +467,17 @@ function exibirPalpiteComAnimacao(palpite) {
 // Copiar palpites gerados para área de transferência
 function copiarPalpite() {
   if (palpiteAtual.length === 0) return;
-  
+
   const texto = palpiteAtual.map(n => formatarNumero(n)).join(', ');
-  
+
   navigator.clipboard.writeText(texto).then(() => {
     const btn = document.getElementById('btn-copy');
     const btnText = document.getElementById('copy-btn-text');
     const copyIcon = document.getElementById('copy-icon');
-    
+
     // Guardar SVG interno original
     const originalSvg = copyIcon.innerHTML;
-    
+
     // Feedback Visual Premium
     copyIcon.innerHTML = '<polyline points="20 6 9 17 4 12"></polyline>';
     copyIcon.style.stroke = "var(--neon-green)";
@@ -485,7 +486,7 @@ function copiarPalpite() {
     btn.style.borderColor = "var(--neon-green)";
     btn.style.boxShadow = "0 0 12px rgba(0, 255, 136, 0.25)";
     btn.style.transform = "scale(1.03)";
-    
+
     // Restaurar após 2 segundos
     setTimeout(() => {
       copyIcon.innerHTML = originalSvg;
@@ -509,19 +510,19 @@ function copiarPalpite() {
 function adicionarMensagemChat(autor, texto) {
   const container = document.getElementById('chat-messages');
   if (!container) return;
-  
+
   const bolha = document.createElement('div');
   bolha.className = `chat-bubble ${autor}`;
-  
+
   // Converter marcações simples de negrito (**texto**) e quebras de linha para HTML
   let formatado = texto
     .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
     .replace(/\*(.*?)\*/g, '<em>$1</em>')
     .replace(/\n/g, '<br>');
-    
+
   bolha.innerHTML = formatado;
   container.appendChild(bolha);
-  
+
   // Rolar para a última mensagem com comportamento suave
   container.scrollTo({
     top: container.scrollHeight,
@@ -533,18 +534,18 @@ function adicionarMensagemChat(autor, texto) {
 function exibirIndicadorDigitacao() {
   const container = document.getElementById('chat-messages');
   if (!container) return null;
-  
+
   const indicador = document.createElement('div');
   indicador.className = 'typing-indicator chat-bubble agent';
   indicador.id = 'typing-indicator';
   indicador.innerHTML = '<span></span><span></span><span></span>';
-  
+
   container.appendChild(indicador);
   container.scrollTo({
     top: container.scrollHeight,
     behavior: 'smooth'
   });
-  
+
   return indicador;
 }
 
@@ -552,19 +553,19 @@ function exibirIndicadorDigitacao() {
 function enviarMensagemChat() {
   const input = document.getElementById('chat-input');
   if (!input) return;
-  
+
   const texto = input.value.trim();
   if (texto === '') return;
-  
+
   // Adiciona a mensagem do usuário no chat
   adicionarMensagemChat('user', texto);
-  
+
   // Limpa o input
   input.value = '';
-  
+
   // Processa a resposta do agente com simulação de pensamento
   const indicador = exibirIndicadorDigitacao();
-  
+
   setTimeout(() => {
     if (indicador) indicador.remove();
     processarMensagemAgente(texto);
@@ -576,16 +577,16 @@ function processarMensagemAgente(pergunta) {
   const data = loteriasData[jogoAtivo];
   const medias = obterDezenasMedias(data);
   const textoMinusculo = pergunta.toLowerCase();
-  
+
   let resposta = "";
-  
+
   // 1. Gerar palpite / Gerar jogo (Máxima prioridade: evita que "palpite de hoje" caia em data)
   if (textoMinusculo.match(/(gerar|palpite|jogo|gerar jogo|me dá|da um|dá um|sugestão|sortear|faz um)/)) {
     const palpite = data.gerar(medias);
     if (palpite) {
       palpiteAtual = palpite.numeros;
       exibirPalpiteComAnimacao(palpite);
-      
+
       const numerosFormatados = palpite.numeros.map(n => formatarNumero(n)).join(', ');
       resposta = `Com certeza! Calculei um palpite estatístico de alta convergência para você:\n\n**${numerosFormatados}**\n\n**Composição:** ${palpite.detalhes.composição}\n**Paridade:** ${palpite.detalhes.paridade}\n**Faixas:** ${palpite.detalhes.distribuição}\n\nO palpite já está renderizado em esferas 3D no painel principal! Você pode copiá-lo clicando em *Copiar Jogo*.`;
     } else {
@@ -594,12 +595,12 @@ function processarMensagemAgente(pergunta) {
   }
   // 2. Dezenas Quentes (Alta prioridade: evita que "quentes de hoje" caia em data)
   else if (textoMinusculo.match(/(quente|quentes|mais sorteadas|mais sairam|mais saíram|frequentes|frequência|frequencia)/)) {
-    const quentesFormatadas = [...data.quentes].sort((a,b)=>a-b).map(n => formatarNumero(n)).join(', ');
+    const quentesFormatadas = [...data.quentes].sort((a, b) => a - b).map(n => formatarNumero(n)).join(', ');
     resposta = `As dezenas **quentes** (historicamente mais sorteadas) para a **${data.nome}** são:\n\n**${quentesFormatadas}**\n\nNossa estratégia recomenda selecionar exatamente **${jogoAtivo === 'mega' ? '2 dezenas' : jogoAtivo === 'quina' ? '2 dezenas' : '8 dezenas'}** desse grupo para equilibrar suas probabilidades de acerto.`;
   }
   // 3. Dezenas Frias (Alta prioridade: evita que "frias de hoje" caia em data)
   else if (textoMinusculo.match(/(fria|frias|atrasada|atrasadas|menos sorteadas|menos sairam|menos saíram|geladas)/)) {
-    const friasFormatadas = [...data.frias].sort((a,b)=>a-b).map(n => formatarNumero(n)).join(', ');
+    const friasFormatadas = [...data.frias].sort((a, b) => a - b).map(n => formatarNumero(n)).join(', ');
     resposta = `As dezenas **frias** (atrasadas ou com menor frequência recente) para a **${data.nome}** são:\n\n**${friasFormatadas}**\n\nNosso algoritmo estatístico insere **${jogoAtivo === 'mega' ? '2 dezenas' : jogoAtivo === 'quina' ? '2 dezenas' : '3 dezenas'}** frias no palpite para cobrir ciclos de atraso que tendem a se fechar.`;
   }
   // 4. Saudação
@@ -613,7 +614,7 @@ function processarMensagemAgente(pergunta) {
     const statusSorteio = temSorteio
       ? `🍀 **Sim, hoje tem sorteio oficial da ${data.nome}!**\n\n⏰ **Horário:** ${data.horaSorteio}\n📍 **Local:** Espaço da Sorte, São Paulo-SP\n\nMinha lógica probabilística já está calibrada para esta rodada.`
       : `📅 **Hoje não há sorteio regular agendado para a ${data.nome}.**\n\n📆 **Próximos sorteios:** ${data.diasSorteio}\n⏰ **Horário:** ${data.horaSorteio}\n📍 **Local:** Espaço da Sorte, São Paulo-SP\n\nMas você já pode se antecipar e gerar palpites incríveis para o próximo concurso!`;
-      
+
     resposta = `Hoje é **${hojeStr}**.\n\n${statusSorteio}`;
   }
   // 6. Estratégia / Como funciona
@@ -637,7 +638,7 @@ function processarMensagemAgente(pergunta) {
       preco = "R$ 3,50 (aposta simples de 15 dezenas)";
       extra = "Você pode jogar até 20 números, e o preço aumenta progressivamente.";
     }
-    
+
     resposta = `O valor atual da aposta para a **${data.nome}** é de **${preco}**.\n\n${extra}`;
   }
   // 8. Prêmio e Estimativa
@@ -667,7 +668,7 @@ function processarMensagemAgente(pergunta) {
   else {
     resposta = `Entendi a sua dúvida, mas não consegui encontrar uma estatística específica para essa pergunta.\n\nTente me perguntar sobre:\n✦ *"Me dê um palpite"* (Gera um jogo dinâmico)\n✦ *"Quais as dezenas quentes?"*\n✦ *"Quais as dezenas frias?"*\n✦ *"Qual a sua estratégia para a ${data.nome}?"*`;
   }
-  
+
   adicionarMensagemChat('agente', resposta);
 }
 
@@ -679,19 +680,19 @@ function processarMensagemAgente(pergunta) {
 function obterDataFormatada() {
   const data = new Date();
   const diasSemana = [
-    "Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira", 
+    "Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira",
     "Quinta-feira", "Sexta-feira", "Sábado"
   ];
   const meses = [
-    "janeiro", "fevereiro", "março", "abril", "maio", "junho", 
+    "janeiro", "fevereiro", "março", "abril", "maio", "junho",
     "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"
   ];
-  
+
   const diaSemana = diasSemana[data.getDay()];
   const dia = data.getDate();
   const mes = meses[data.getMonth()];
   const ano = data.getFullYear();
-  
+
   return `${diaSemana}, ${dia} de ${mes} de ${ano}`;
 }
 
@@ -734,12 +735,12 @@ function mostrarToast(mensagem, tipo = 'success') {
 const ApiService = {
   // Se estiver abrindo o arquivo direto no PC (file://), usa localhost, senão usa /api relativo do servidor unificado
   baseUrl: window.location.protocol === 'file:' ? 'http://localhost:8000/api' : '/api',
-  
+
   setStatus(status) {
     const dot = document.getElementById('api-status-dot');
     const text = document.getElementById('api-status-text');
     if (!dot || !text) return;
-    
+
     dot.className = `dot ${status === 'online' ? 'green' : status === 'offline' ? 'red' : 'yellow'}`;
     text.textContent = status === 'online' ? 'API Conectada' : status === 'offline' ? 'Modo Offline (Estatístico)' : 'Conectando...';
   },
@@ -752,9 +753,9 @@ const ApiService = {
     const bolasContainer = document.getElementById('res-bolas');
     const premiosContainer = document.getElementById('res-premios');
     const acumulouBadge = document.getElementById('res-acumulou');
-    
+
     if (!container) return;
-    
+
     container.style.display = 'block';
     bolasContainer.innerHTML = '<span style="color:var(--text-secondary);font-size:0.8rem;">Carregando dados da Caixa...</span>';
     premiosContainer.innerHTML = '';
@@ -763,17 +764,17 @@ const ApiService = {
     try {
       const response = await fetch(`${this.baseUrl}/resultados/${jogo}`);
       if (!response.ok) throw new Error('API indisponível');
-      
+
       const data = await response.json();
       window.ultimoResultadoCaixa = data;
       this.setStatus('online');
-      
+
       concursoEl.textContent = `#${data.numero}`;
       dataEl.textContent = data.dataApuracao;
-      
+
       // Renderizar bolas do sorteio oficial
       bolasContainer.innerHTML = '';
-      if (data.listaDezenas) {
+      if (data.listaDezenas && Array.isArray(data.listaDezenas)) {
         data.listaDezenas.forEach(numStr => {
           const bola = document.createElement('div');
           bola.className = 'ball ball-palpite'; // usa estilo dourado neutro
@@ -783,6 +784,16 @@ const ApiService = {
           bola.textContent = numStr;
           bolasContainer.appendChild(bola);
         });
+
+        // Atualização dinâmica das dezenas repetidas (do último concurso oficial)
+        if (loteriasData[jogo]) {
+          loteriasData[jogo].repetidas = data.listaDezenas.map(n => parseInt(n, 10));
+          if (jogoAtivo === jogo) {
+            const colRep = document.getElementById('col-repetidas');
+            if (colRep) colRep.style.display = 'block';
+            renderizarBolasFrequencia(loteriasData[jogo].repetidas, 'repetidas-numbers', 'ball-cold');
+          }
+        }
       }
 
       // Acumulou?
@@ -790,17 +801,20 @@ const ApiService = {
         acumulouBadge.style.display = 'block';
       }
 
-      // Premiação
-      if (data.premiacao && data.premiacao.length > 0) {
-        // Pega as 3 principais faixas
-        const faixas = data.premiacao.slice(0, 3);
+      // Premiação / Rateio
+      const listaPremios = data.listaRateioPremio || data.premiacao || [];
+      if (listaPremios && listaPremios.length > 0) {
+        const faixas = listaPremios.slice(0, 3);
         faixas.forEach(p => {
-          const valorFmt = p.valorPremio.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-          const ganhadoresTxt = p.quantidadeGanhadores === 0 ? 'Ninguém acertou' : `${p.quantidadeGanhadores} ganhador(es)`;
-          
+          const valor = p.valorPremio || 0;
+          const valorFmt = valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+          const qtd = p.numeroDeGanhadores !== undefined ? p.numeroDeGanhadores : (p.quantidadeGanhadores || 0);
+          const ganhadoresTxt = qtd === 0 ? 'Ninguém acertou' : `${qtd} ganhador(es)`;
+          const desc = p.descricaoFaixa || p.nome || 'Faixa';
+
           premiosContainer.innerHTML += `
             <div class="premio-linha">
-              <span class="premio-nome">${p.nome} (${ganhadoresTxt})</span>
+              <span class="premio-nome">${desc} (${ganhadoresTxt})</span>
               <span class="premio-valor">${valorFmt}</span>
             </div>
           `;
@@ -823,21 +837,21 @@ class HistoricoManager {
 
   salvar(jogo, dezenas, detalhes) {
     if (!this.dados[jogo]) this.dados[jogo] = [];
-    
+
     const novoPalpite = {
       id: Date.now(),
       data: new Date().toLocaleString('pt-BR'),
       dezenas: dezenas,
       detalhes: detalhes
     };
-    
+
     this.dados[jogo].unshift(novoPalpite); // adiciona no início
-    
+
     // Limita a 20 palpites por jogo
     if (this.dados[jogo].length > 20) {
       this.dados[jogo].pop();
     }
-    
+
     this._persistir();
     this.renderizar(jogo);
   }
@@ -857,12 +871,12 @@ class HistoricoManager {
       mostrarToast('Não há palpites para exportar.', 'error');
       return;
     }
-    
+
     let texto = `Histórico de Palpites - ${jogo.toUpperCase()}\n\n`;
     lista.forEach(p => {
       texto += `[${p.data}] ${p.dezenas.map(n => formatarNumero(n)).join(' - ')}\n`;
     });
-    
+
     navigator.clipboard.writeText(texto).then(() => {
       mostrarToast('Histórico copiado para área de transferência!', 'success');
     });
@@ -872,18 +886,18 @@ class HistoricoManager {
     const container = document.getElementById('historico-lista');
     const actions = document.getElementById('historico-actions');
     if (!container) return;
-    
+
     const lista = this.dados[jogo] || [];
-    
+
     if (lista.length === 0) {
       container.innerHTML = '<div style="color:var(--text-secondary);font-size:0.8rem;text-align:center;padding:10px;">Nenhum palpite gerado ainda.</div>';
       actions.style.display = 'none';
       return;
     }
-    
+
     actions.style.display = 'flex';
     container.innerHTML = '';
-    
+
     lista.forEach(p => {
       const dezenasFmt = p.dezenas.map(n => formatarNumero(n)).join('  ');
       container.innerHTML += `

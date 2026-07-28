@@ -9,20 +9,23 @@
   --bg-card-hover: rgba(15, 38, 77, 0.7);
   --border-light: rgba(255, 255, 255, 0.08);
   --border-active: rgba(0, 200, 255, 0.3);
-  
+
   /* Paleta Neon Futurista */
   --text-primary: #ffffff;
   --text-secondary: #a0aec0;
-  --color-mega: #209869;     /* Verde Mega-Sena */
-  --color-quina: #262f7e;    /* Azul Quina */
-  --color-lotofacil: #93096c;/* Roxo Lotofácil */
-  
+  --color-mega: #209869;
+  /* Verde Mega-Sena */
+  --color-quina: #262f7e;
+  /* Azul Quina */
+  --color-lotofacil: #93096c;
+  /* Roxo Lotofácil */
+
   --neon-cyan: #00c8ff;
   --neon-gold: #ffd700;
   --neon-orange: #ff6b08;
   --neon-green: #00ff88;
   --neon-red: #ff3366;
-  
+
   /* Tipografia */
   --font-main: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
@@ -73,20 +76,23 @@ body {
 .dashboard-container {
   width: 85%;
   height: 100%;
-  background-color: #081730; /* Fundo sólido escuro */
+  background-color: #081730;
+  /* Fundo sólido escuro */
   border-radius: 20px;
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
   border: 1px solid rgba(255, 255, 255, 0.1);
   display: flex;
   flex-direction: column;
   position: relative;
-  overflow-y: auto; /* Permite rolagem de toda a página se necessário */
+  overflow-y: auto;
+  /* Permite rolagem de toda a página se necessário */
 }
 
 /* Área do Desenho (Exibição da Imagem Original sem sobreposição) */
 .dashboard-visual-area {
   width: 100%;
-  background-color: #050f21; /* Fundo mais escuro para destacar o desenho */
+  background-color: #050f21;
+  /* Fundo mais escuro para destacar o desenho */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -97,9 +103,11 @@ body {
 
 .dashboard-visual-image {
   max-width: 100%;
-  max-height: 380px; /* Limita a altura para deixar espaço livre para a mesa de palpites */
+  max-height: 380px;
+  /* Limita a altura para deixar espaço livre para a mesa de palpites */
   height: auto;
-  object-fit: contain; /* Mostra a imagem completa sem nenhum corte */
+  object-fit: contain;
+  /* Mostra a imagem completa sem nenhum corte */
   border-radius: 12px;
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
 }
@@ -217,9 +225,20 @@ body {
   display: inline-block;
 }
 
-.nav-btn-indicator.mega { background-color: var(--neon-green); box-shadow: 0 0 8px var(--neon-green); }
-.nav-btn-indicator.quina { background-color: var(--neon-cyan); box-shadow: 0 0 8px var(--neon-cyan); }
-.nav-btn-indicator.lotofacil { background-color: #ff00c8; box-shadow: 0 0 8px #ff00c8; }
+.nav-btn-indicator.mega {
+  background-color: var(--neon-green);
+  box-shadow: 0 0 8px var(--neon-green);
+}
+
+.nav-btn-indicator.quina {
+  background-color: var(--neon-cyan);
+  box-shadow: 0 0 8px var(--neon-cyan);
+}
+
+.nav-btn-indicator.lotofacil {
+  background-color: #ff00c8;
+  box-shadow: 0 0 8px #ff00c8;
+}
 
 /* Grid de Conteúdo Principal (Abaixo da área do desenho no topo) */
 .dashboard-content {
@@ -235,7 +254,8 @@ body {
   grid-template-columns: 1fr 1.3fr;
   gap: 30px;
   padding: 25px;
-  background: #0d2142; /* Fundo sólido elegante, sem transparência de imagem por trás */
+  background: #0d2142;
+  /* Fundo sólido elegante, sem transparência de imagem por trás */
   border: 1px solid rgba(255, 255, 255, 0.1);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
 }
@@ -309,10 +329,12 @@ body {
     transform: scale(0.95);
     box-shadow: 0 0 0 0 rgba(0, 255, 136, 0.7);
   }
+
   70% {
     transform: scale(1);
     box-shadow: 0 0 0 6px rgba(0, 255, 136, 0);
   }
+
   100% {
     transform: scale(0.95);
     box-shadow: 0 0 0 0 rgba(0, 255, 136, 0);
@@ -430,8 +452,13 @@ body {
   letter-spacing: 0.5px;
 }
 
-.title-hot { color: #ffa260; }
-.title-cold { color: #8fa6ff; }
+.title-hot {
+  color: #ffa260;
+}
+
+.title-cold {
+  color: #8fa6ff;
+}
 
 .badge {
   font-size: 0.65rem;
@@ -485,16 +512,16 @@ body {
 /* Bolas Quentes (Vermelho/Dourado/Laranja) */
 .ball-hot {
   background: radial-gradient(circle at 30% 30%, #ffa260 0%, #d84b06 70%, #8c2e00 100%);
-  box-shadow: inset -3px -3px 6px rgba(0,0,0,0.6), 
-              0 4px 8px rgba(255, 107, 8, 0.25);
+  box-shadow: inset -3px -3px 6px rgba(0, 0, 0, 0.6),
+    0 4px 8px rgba(255, 107, 8, 0.25);
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
 }
 
 /* Bolas Frias (Azul/Cyan) */
 .ball-cold {
   background: radial-gradient(circle at 30% 30%, #aedfff 0%, #1e60db 70%, #082d8c 100%);
-  box-shadow: inset -3px -3px 6px rgba(0,0,0,0.6), 
-              0 4px 8px rgba(0, 200, 255, 0.25);
+  box-shadow: inset -3px -3px 6px rgba(0, 0, 0, 0.6),
+    0 4px 8px rgba(0, 200, 255, 0.25);
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
 }
 
@@ -556,28 +583,28 @@ body {
   opacity: 0;
   transform: scale(0.3);
   animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-  
+
   /* Dourado Neon por padrão */
   background: radial-gradient(circle at 30% 30%, #ffe97f 0%, #cca000 70%, #7f6000 100%);
-  box-shadow: inset -4px -4px 8px rgba(0,0,0,0.6), 
-              0 8px 15px rgba(255, 215, 0, 0.25);
+  box-shadow: inset -4px -4px 8px rgba(0, 0, 0, 0.6),
+    0 8px 15px rgba(255, 215, 0, 0.25);
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
 }
 
 /* Variação de cores por tipo de dezena no palpite */
 .ball-palpite.hot {
   background: radial-gradient(circle at 30% 30%, #ffa260 0%, #e25814 70%, #993300 100%);
-  box-shadow: inset -4px -4px 8px rgba(0,0,0,0.6), 0 8px 15px rgba(255, 107, 8, 0.3);
+  box-shadow: inset -4px -4px 8px rgba(0, 0, 0, 0.6), 0 8px 15px rgba(255, 107, 8, 0.3);
 }
 
 .ball-palpite.medium {
   background: radial-gradient(circle at 30% 30%, #e0e0e0 0%, #888888 70%, #444444 100%);
-  box-shadow: inset -4px -4px 8px rgba(0,0,0,0.6), 0 8px 15px rgba(255, 255, 255, 0.15);
+  box-shadow: inset -4px -4px 8px rgba(0, 0, 0, 0.6), 0 8px 15px rgba(255, 255, 255, 0.15);
 }
 
 .ball-palpite.cold {
   background: radial-gradient(circle at 30% 30%, #aedfff 0%, #1e60db 70%, #082d8c 100%);
-  box-shadow: inset -4px -4px 8px rgba(0,0,0,0.6), 0 8px 15px rgba(0, 200, 255, 0.3);
+  box-shadow: inset -4px -4px 8px rgba(0, 0, 0, 0.6), 0 8px 15px rgba(0, 200, 255, 0.3);
 }
 
 @keyframes popIn {
@@ -728,13 +755,16 @@ body {
 .chat-messages::-webkit-scrollbar {
   width: 4px;
 }
+
 .chat-messages::-webkit-scrollbar-track {
   background: transparent;
 }
+
 .chat-messages::-webkit-scrollbar-thumb {
   background: rgba(255, 255, 255, 0.08);
   border-radius: 10px;
 }
+
 .chat-messages::-webkit-scrollbar-thumb:hover {
   background: var(--border-active);
 }
@@ -780,6 +810,7 @@ body {
     opacity: 0;
     transform: translateY(8px) scale(0.98);
   }
+
   to {
     opacity: 1;
     transform: translateY(0) scale(1);
@@ -861,9 +892,13 @@ body {
 }
 
 @keyframes typingBounce {
-  0%, 80%, 100% {
+
+  0%,
+  80%,
+  100% {
     transform: translateY(0);
   }
+
   40% {
     transform: translateY(-4px);
   }
@@ -915,16 +950,24 @@ body {
 }
 
 @keyframes pulse-red {
-  0% { box-shadow: 0 0 0 0 rgba(255, 51, 102, 0.4); }
-  70% { box-shadow: 0 0 0 6px rgba(255, 51, 102, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(255, 51, 102, 0); }
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 51, 102, 0.4);
+  }
+
+  70% {
+    box-shadow: 0 0 0 6px rgba(255, 51, 102, 0);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 51, 102, 0);
+  }
 }
 
 .resultado-premios {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  background: rgba(0,0,0,0.2);
+  background: rgba(0, 0, 0, 0.2);
   padding: 10px;
   border-radius: 8px;
 }
@@ -934,11 +977,22 @@ body {
   justify-content: space-between;
   font-size: 0.75rem;
   padding-bottom: 4px;
-  border-bottom: 1px dashed rgba(255,255,255,0.05);
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.05);
 }
-.premio-linha:last-child { border-bottom: none; padding-bottom: 0; }
-.premio-nome { color: var(--text-secondary); }
-.premio-valor { color: var(--neon-green); font-weight: 700; }
+
+.premio-linha:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.premio-nome {
+  color: var(--text-secondary);
+}
+
+.premio-valor {
+  color: var(--neon-green);
+  font-weight: 700;
+}
 
 /* ==========================================================================
    HISTÓRICO DE PALPITES (NOVO)
@@ -961,7 +1015,9 @@ body {
   transition: background 0.2s;
 }
 
-.historico-header:hover { background: rgba(0, 0, 0, 0.3); }
+.historico-header:hover {
+  background: rgba(0, 0, 0, 0.3);
+}
 
 .historico-header h3 {
   font-size: 0.85rem;
@@ -978,11 +1034,17 @@ body {
   gap: 8px;
 }
 
-.historico-lista::-webkit-scrollbar { width: 4px; }
-.historico-lista::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 4px; }
+.historico-lista::-webkit-scrollbar {
+  width: 4px;
+}
+
+.historico-lista::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
 
 .historico-item {
-  background: rgba(0,0,0,0.3);
+  background: rgba(0, 0, 0, 0.3);
   padding: 8px 12px;
   border-radius: 6px;
   display: flex;
@@ -1008,13 +1070,13 @@ body {
   padding: 10px;
   display: flex;
   gap: 10px;
-  border-top: 1px solid rgba(255,255,255,0.05);
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .btn-micro {
   flex: 1;
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   color: var(--text-secondary);
   padding: 6px;
   border-radius: 4px;
@@ -1022,7 +1084,11 @@ body {
   cursor: pointer;
   transition: all 0.2s;
 }
-.btn-micro:hover { background: rgba(255,255,255,0.1); color: white; }
+
+.btn-micro:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+}
 
 /* ==========================================================================
    TOAST NOTIFICATIONS (NOVO)
@@ -1044,7 +1110,7 @@ body {
   color: white;
   padding: 12px 20px;
   border-radius: 8px;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
   font-size: 0.85rem;
   font-weight: 600;
   animation: slideInRight 0.3s forwards, fadeOut 0.5s 2.5s forwards;
@@ -1052,20 +1118,33 @@ body {
   transform: translateX(100%);
 }
 
-.toast.success { border-left-color: var(--neon-green); }
-.toast.error { border-left-color: var(--neon-red); }
+.toast.success {
+  border-left-color: var(--neon-green);
+}
+
+.toast.error {
+  border-left-color: var(--neon-red);
+}
 
 @keyframes slideInRight {
-  to { opacity: 1; transform: translateX(0); }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
+
 @keyframes fadeOut {
-  to { opacity: 0; transform: translateX(100%); }
+  to {
+    opacity: 0;
+    transform: translateX(100%);
+  }
 }
 
 .dot.yellow {
   background-color: var(--neon-gold);
   box-shadow: 0 0 6px var(--neon-gold);
 }
+
 .dot.red {
   background-color: var(--neon-red);
   box-shadow: 0 0 6px var(--neon-red);
@@ -1077,13 +1156,13 @@ body {
     height: auto;
     min-height: auto;
   }
-  
+
   .dashboard-container {
     width: 100%;
     height: auto;
     background-size: cover;
   }
-  
+
   .dashboard-content {
     width: 100%;
     min-width: auto;
@@ -1105,7 +1184,7 @@ body {
   .dashboard-visual-image {
     max-height: 240px;
   }
-  
+
   .dashboard-header {
     flex-direction: column;
     gap: 15px;
@@ -1118,26 +1197,26 @@ body {
   body {
     padding: 10px;
   }
-  
+
   .lottery-nav {
     flex-direction: column;
     width: 100%;
   }
-  
+
   .nav-btn {
     width: 100%;
     justify-content: center;
   }
-  
+
   .frequency-section {
     grid-template-columns: 1fr;
   }
-  
+
   .game-analytics {
     grid-template-columns: 1fr;
     gap: 8px;
   }
-  
+
   .dashboard-footer {
     flex-direction: column;
     gap: 10px;
