@@ -206,6 +206,150 @@
                 </button>
               </div>
 
+              <!-- Módulo Avançado de Interface Lotofacil_Agent (4 Abas) -->
+              <div id="lotofacil-ml-section" class="lotofacil-ml-card" style="display: none; margin-top: 15px; padding: 16px; background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(0, 255, 170, 0.2); border-radius: 14px; backdrop-filter: blur(10px);">
+                
+                <!-- Sub-Navegação de Abas da Lotofácil -->
+                <div class="lotofacil-tabs-nav" style="display: flex; gap: 6px; margin-bottom: 14px; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 8px; overflow-x: auto;">
+                  <button type="button" class="tab-sub-btn active" onclick="trocarSubAbaLotofacil('dashboard')" id="subtab-btn-dashboard" style="background: rgba(0, 255, 170, 0.15); color: var(--neon-green); border: 1px solid rgba(0, 255, 170, 0.3); padding: 6px 12px; border-radius: 8px; font-size: 0.78rem; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 4px;">
+                    📊 Dashboard
+                  </button>
+                  <button type="button" class="tab-sub-btn" onclick="trocarSubAbaLotofacil('ml')" id="subtab-btn-ml" style="background: rgba(255,255,255,0.05); color: var(--text-secondary); border: 1px solid rgba(255,255,255,0.1); padding: 6px 12px; border-radius: 8px; font-size: 0.78rem; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 4px;">
+                    🧠 Machine Learning
+                  </button>
+                  <button type="button" class="tab-sub-btn" onclick="trocarSubAbaLotofacil('palpiteiro')" id="subtab-btn-palpiteiro" style="background: rgba(255,255,255,0.05); color: var(--text-secondary); border: 1px solid rgba(255,255,255,0.1); padding: 6px 12px; border-radius: 8px; font-size: 0.78rem; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 4px;">
+                    🎲 Agente Palpiteiro
+                  </button>
+                  <button type="button" class="tab-sub-btn" onclick="trocarSubAbaLotofacil('settings')" id="subtab-btn-settings" style="background: rgba(255,255,255,0.05); color: var(--text-secondary); border: 1px solid rgba(255,255,255,0.1); padding: 6px 12px; border-radius: 8px; font-size: 0.78rem; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 4px;">
+                    ⚙️ Configurações
+                  </button>
+                </div>
+
+                <!-- ABA 1: DASHBOARD (Gráficos, Mapa de Calor 5x5 e Indicadores) -->
+                <div id="subtab-dashboard" class="subtab-content" style="display: block;">
+                  <!-- Indicadores Rápidos -->
+                  <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 12px; font-size: 0.78rem; text-align: center;">
+                    <div style="background: rgba(0,0,0,0.25); padding: 8px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05);">
+                      <span style="color: var(--text-secondary); display: block; font-size: 0.68rem;">Pares vs Ímpares</span>
+                      <strong id="ind-parity" style="color: #55ffb8; font-size: 0.85rem;">8Í / 7P</strong>
+                    </div>
+                    <div style="background: rgba(0,0,0,0.25); padding: 8px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05);">
+                      <span style="color: var(--text-secondary); display: block; font-size: 0.68rem;">Moldura vs Miolo</span>
+                      <strong id="ind-moldura" style="color: #55d4ff; font-size: 0.85rem;">10 Moldura</strong>
+                    </div>
+                    <div style="background: rgba(0,0,0,0.25); padding: 8px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05);">
+                      <span style="color: var(--text-secondary); display: block; font-size: 0.68rem;">Soma das Dezenas</span>
+                      <strong id="ind-soma" style="color: #ffb855; font-size: 0.85rem;">Média ~195</strong>
+                    </div>
+                  </div>
+
+                  <!-- Mapa de Calor 5x5 do Volante -->
+                  <div style="margin-bottom: 12px;">
+                    <h4 style="font-size: 0.8rem; color: var(--text-secondary); margin: 0 0 6px 0; display: flex; justify-content: space-between;">
+                      <span>🔥 Mapa de Calor do Volante (5x5)</span>
+                      <span style="font-size: 0.7rem; color: #55ffb8;">Quentes / Mornas / Frias</span>
+                    </h4>
+                    <div id="heatmap-grid-5x5" style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px;">
+                      <!-- Células do Heatmap geradas via JS -->
+                    </div>
+                  </div>
+
+                  <!-- Gráfico de Frequência das Dezenas -->
+                  <div>
+                    <h4 style="font-size: 0.8rem; color: var(--text-secondary); margin: 0 0 6px 0;">📊 Frequência das Dezenas (Top Sorteadas)</h4>
+                    <div id="frequency-bar-chart" style="display: flex; align-items: flex-end; gap: 2px; height: 60px; background: rgba(0,0,0,0.3); padding: 6px; border-radius: 6px;">
+                      <!-- Barras SVG/HTML5 geradas via JS -->
+                    </div>
+                  </div>
+                </div>
+
+                <!-- ABA 2: MACHINE LEARNING (Clusters KMeans, Feature Importance e Evolução Temporal) -->
+                <div id="subtab-ml" class="subtab-content" style="display: none;">
+                  <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 12px; font-size: 0.78rem; text-align: center;">
+                    <div style="background: rgba(0,0,0,0.25); padding: 8px; border-radius: 8px;">
+                      <span style="color: var(--text-secondary); display: block; font-size: 0.68rem;">Rede Neural MLP</span>
+                      <strong id="ml-mlp-acc-2" style="color: #55ffb8; font-size: 0.9rem;">59.0%</strong>
+                    </div>
+                    <div style="background: rgba(0,0,0,0.25); padding: 8px; border-radius: 8px;">
+                      <span style="color: var(--text-secondary); display: block; font-size: 0.68rem;">Random Forest</span>
+                      <strong id="ml-rf-acc-2" style="color: #55d4ff; font-size: 0.9rem;">63.5%</strong>
+                    </div>
+                    <div style="background: rgba(0,0,0,0.25); padding: 8px; border-radius: 8px;">
+                      <span style="color: var(--text-secondary); display: block; font-size: 0.68rem;">KMeans Clusters</span>
+                      <strong id="ml-clusters-count-2" style="color: #ffb855; font-size: 0.9rem;">4 Perfis</strong>
+                    </div>
+                  </div>
+
+                  <!-- Perfis de Clusters KMeans -->
+                  <div style="margin-bottom: 10px;">
+                    <h4 style="font-size: 0.8rem; color: var(--text-secondary); margin: 0 0 6px 0;">🎯 Perfis dos Clusters (KMeans)</h4>
+                    <div id="kmeans-clusters-container" style="display: flex; flex-direction: column; gap: 4px; max-height: 100px; overflow-y: auto;">
+                      <!-- Perfis gerados via JS -->
+                    </div>
+                  </div>
+
+                  <!-- Evolução Temporal de Probabilidade -->
+                  <div>
+                    <h4 style="font-size: 0.8rem; color: var(--text-secondary); margin: 0 0 6px 0;">📈 Tendência Recente (Últimos Concursos)</h4>
+                    <div id="ml-timeline-preview" style="font-size: 0.75rem; color: var(--text-secondary); background: rgba(0,0,0,0.2); padding: 8px; border-radius: 6px;">
+                      Probabilidade estabilizada com janelas móveis de 10 sorteios e fusão probabilística.
+                    </div>
+                  </div>
+                </div>
+
+                <!-- ABA 3: AGENTE PALPITEIRO (Ações de Gerar e Salvar) -->
+                <div id="subtab-palpiteiro" class="subtab-content" style="display: none;">
+                  <div style="display: flex; gap: 8px; margin-bottom: 10px;">
+                    <button type="button" class="btn btn-primary" onclick="gerarPalpiteEstatistico()" style="flex: 1; font-size: 0.82rem; padding: 8px;">
+                      🎲 Gerar Palpite Inteligente
+                    </button>
+                    <button type="button" class="btn btn-secondary" onclick="copiarPalpite()" style="font-size: 0.82rem; padding: 8px;">
+                      💾 Salvar / Copiar
+                    </button>
+                  </div>
+                  <div style="font-size: 0.75rem; color: var(--text-secondary); text-align: center;">
+                    Algoritmo ativo combinando regras estatísticas e pontuação probabilística de IA.
+                  </div>
+                </div>
+
+                <!-- ABA 4: CONFIGURAÇÕES (Sliders de Peso e Escolha de Modelo) -->
+                <div id="subtab-settings" class="subtab-content" style="display: none;">
+                  <div style="display: flex; flex-direction: column; gap: 10px; font-size: 0.8rem;">
+                    <div>
+                      <div style="display: flex; justify-content: space-between; margin-bottom: 2px;">
+                        <span>⚖️ Peso Paridade (Pares/Ímpares):</span>
+                        <strong id="parity-val-display" style="color: #55ffb8;">0.5</strong>
+                      </div>
+                      <input type="range" id="slider-parity" min="0" max="1" step="0.1" value="0.5" oninput="document.getElementById('parity-val-display').textContent = this.value" style="width: 100%; accent-color: var(--neon-green);">
+                    </div>
+
+                    <div>
+                      <div style="display: flex; justify-content: space-between; margin-bottom: 2px;">
+                        <span>🖼️ Peso Moldura (Bordas/Miolo):</span>
+                        <strong id="moldura-val-display" style="color: #55d4ff;">0.5</strong>
+                      </div>
+                      <input type="range" id="slider-moldura" min="0" max="1" step="0.1" value="0.5" oninput="document.getElementById('moldura-val-display').textContent = this.value" style="width: 100%; accent-color: #55d4ff;">
+                    </div>
+
+                    <div>
+                      <label style="display: block; margin-bottom: 4px; color: var(--text-secondary);">🤖 Modelo de ML Ativo:</label>
+                      <select id="select-active-model" style="width: 100%; padding: 6px; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.15); color: #fff; border-radius: 6px; font-size: 0.8rem;">
+                        <option value="RandomForest">RandomForest Classifier (Recomendado)</option>
+                        <option value="NeuralNetwork_MLP">NeuralNetwork (MLPClassifier)</option>
+                        <option value="KMeans">KMeans Clustering (Perfil de Concursos)</option>
+                      </select>
+                    </div>
+
+                    <div style="margin-top: 4px;">
+                      <button type="button" class="btn btn-secondary" onclick="atualizarBaseDadosLotofacil()" style="width: 100%; font-size: 0.78rem; padding: 8px; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                        🔄 Atualizar Base de Dados e Retreinar IA
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+
               <!-- Histórico de Palpites -->
               <div class="historico-section">
                 <div class="historico-header" onclick="toggleHistorico()">

@@ -310,7 +310,7 @@ function selecionarJogo(jogo) {
       ? `🍀 **Hoje é ${hojeStr} e TEM SORTEIO da ${data.nome} às ${data.horaSorteio}!**`
       : `📅 **Hoje é ${hojeStr}.** (Não há sorteio regular agendado para hoje. Próximos sorteios: ${data.diasSorteio} às ${data.horaSorteio}.)`;
 
-    adicionarMensagemChat('agente', `Olá! Sou seu **Consultor Probabilístico para a ${data.nome}**.\n\n${avisoSorteio}\n\nComo posso ajudar você hoje?\n\nPergunte-me coisas como:\n✦ *"Me dê um palpite"* \n✦ *"Hoje tem sorteio?"*\n✦ *"Quais são as dezenas quentes?"*\n✦ *"Qual a sua estratégia?"*`);
+    adicionarMensagemChat('agente', `Olá! Sou seu **Consultor Probabilístico para a ${data.nome}**.\n\n${avisoSorteio}\n\nComo posso ajudar você hoje?\n\nPergunte-me coisas como:\n✦ *"Me dê um palpite"* \n✦ *"Quanto custa a aposta?"*\n✦ *"Hoje tem sorteio?"*\n✦ *"Quais são as dezenas quentes?"*\n✦ *"Qual a sua estratégia?"*`);
   }
 
   // 4. Renderizar Dezenas Quentes e Frias
@@ -343,6 +343,19 @@ function selecionarJogo(jogo) {
   const statusIndicator = document.getElementById('footer-indicador-texto');
   if (statusIndicator) statusIndicator.textContent = data.indicadorTexto;
 
+  // Seção Exclusiva da Lotofácil (Diagnóstico ML)
+  const lotofacilMlSec = document.getElementById('lotofacil-ml-section');
+  if (lotofacilMlSec) {
+    if (jogo === 'lotofacil') {
+      lotofacilMlSec.style.display = 'block';
+      if (typeof ApiService !== 'undefined' && ApiService.carregarMetricasLotofacilIA) {
+        ApiService.carregarMetricasLotofacilIA();
+      }
+    } else {
+      lotofacilMlSec.style.display = 'none';
+    }
+  }
+
   // 7. Carregar dados da API (se disponível) e Histórico
   if (typeof ApiService !== 'undefined') {
     ApiService.carregarUltimoResultado(jogo);
@@ -369,7 +382,7 @@ function renderizarBolasFrequencia(numeros, containerId, classeBola) {
 }
 
 // Gera um novo palpite estatístico dinâmico
-function gerarPalpiteEstatistico() {
+async function gerarPalpiteEstatistico() {
   const data = loteriasData[jogoAtivo];
   const medias = obterDezenasMedias(data);
   const btnGenerate = document.getElementById('btn-generate');
@@ -387,37 +400,67 @@ function gerarPalpiteEstatistico() {
       <line x1="4.93" y1="19.07" x2="7.76" y2="16.24" />
       <line x1="16.24" y1="7.76" x2="19.07" y2="4.93" />
     </svg>
-    Calculando...
+    Calculando IA...
   `;
 
-  // Simular processamento da IA/Probabilidade com atraso para estética de análise
-  setTimeout(() => {
-    const palpite = data.gerar(medias);
+  let palpite = null;
 
-    if (palpite) {
-      palpiteAtual = palpite.numeros;
-      exibirPalpiteComAnimacao(palpite);
+  // Tenta integrar com backend do Lotofacil_Agent se for Lotofácil
+  if (jogoAtivo === 'lotofacil' && typeof ApiService !== 'undefined') {
+    const sliderParity = document.getElementById('slider-parity');
+    const sliderMoldura = document.getElementById('slider-moldura');
+    const selectModel = document.getElementById('select-active-model');
 
-      if (typeof historicoManager !== 'undefined') {
-        historicoManager.salvar(jogoAtivo, palpiteAtual, palpite.detalhes);
-        mostrarToast('Palpite gerado e salvo!', 'success');
-      }
-    } else {
-      document.getElementById('palpite-balls').innerHTML = `
-        <span class="error-text" style="color: var(--neon-red); font-size: 0.85rem;">Erro de convergência no algoritmo. Tente novamente!</span>
-      `;
-      if (typeof mostrarToast !== 'undefined') mostrarToast('Erro ao gerar palpite.', 'error');
+    const params = {
+      n_games: 1,
+      active_model: selectModel ? selectModel.value : 'RandomForest',
+      parity_weight: sliderParity ? parseFloat(sliderParity.value) : 0.5,
+      moldura_weight: sliderMoldura ? parseFloat(sliderMoldura.value) : 0.5
+    };
+
+    const apiResult = await ApiService.gerarPalpitesCustomIA(params);
+    if (apiResult && apiResult.palpites && apiResult.palpites.length > 0) {
+      const item = apiResult.palpites[0];
+      const m = item.metricas;
+      palpite = {
+        numeros: item.dezenas,
+        detalhes: {
+          composição: `IA ${apiResult.modelo_ativo || 'ML'} (Score: ${item.score_probabilidade}%)`,
+          paridade: `${m.evens} Pares / ${m.odds} Ímpares`,
+          distribuição: `${m.moldura} Moldura (${m.repetition} Repetidas)`
+        }
+      };
     }
+  }
 
-    // Restaurar botão de gerar
-    btnGenerate.disabled = false;
-    btnGenerate.innerHTML = `
-      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67" />
-      </svg>
-      Gerar Palpite
+  // Fallback local se a API não retornar
+  if (!palpite) {
+    palpite = data.gerar(medias);
+  }
+
+  if (palpite) {
+    palpiteAtual = palpite.numeros;
+    exibirPalpiteComAnimacao(palpite);
+
+    if (typeof historicoManager !== 'undefined') {
+      historicoManager.salvar(jogoAtivo, palpiteAtual, palpite.detalhes);
+      mostrarToast('Palpite gerado e salvo!', 'success');
+    }
+  } else {
+    document.getElementById('palpite-balls').innerHTML = `
+      <span class="error-text" style="color: var(--neon-red); font-size: 0.85rem;">Erro de convergência no algoritmo. Tente novamente!</span>
     `;
-  }, 750);
+    if (typeof mostrarToast !== 'undefined') mostrarToast('Erro ao gerar palpite.', 'error');
+  }
+
+  // Restaurar botão de gerar
+  btnGenerate.disabled = false;
+  btnGenerate.innerHTML = `
+    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67" />
+    </svg>
+    Gerar Palpite
+  `;
 }
 
 // Exibe as bolas com efeito bounce e transição suave individual
@@ -622,24 +665,17 @@ function processarMensagemAgente(pergunta) {
     const principiosTexto = data.principios.map(p => `✦ ${p}`).join('\n');
     resposta = `Minha estratégia probabilística para a **${data.nome}** é baseada em:\n\n${principiosTexto}\n\nCombinando essa dispersão e paridade, conseguimos cobrir as faixas matemáticas com maior probabilidade histórica de sorteio!`;
   }
-  // 7. Preço da Aposta
-  else if (textoMinusculo.match(/(preço|preco|custa|custo|valor|quanto pago|cobrado|pagar)/)) {
-    let preco = "";
-    let extra = "";
-    if (jogoAtivo === 'mega') {
-      preco = "R$ 6,00 (aposta simples de 6 dezenas)";
-      extra = "Se quiser aumentar as chances: 7 números custa R$ 42,00, 8 números R$ 168,00, e assim por diante (até 20 números). O Bolão tem valor mínimo de R$ 18,00 (cota mínima R$ 7,00).";
+  // 7. Preço e Valores das Apostas (Diálogo Natural e Detalhado)
+  else if (textoMinusculo.match(/(preço|preco|preços|precos|custa|custo|custos|valor|valores|tabela|quanto pago|quanto custa|cobrado|pagar|aposta simples|bolão|bolao)/)) {
+    if (jogoAtivo === 'lotofacil' || textoMinusculo.includes('lotofácil') || textoMinusculo.includes('lotofacil')) {
+      resposta = `A aposta simples da **Lotofácil** (com **15 dezenas**) custa **R$ 3,50**. 🎟️\n\nCaso queira aumentar suas chances jogando mais dezenas em um mesmo bilhete, os valores oficiais são:\n\n✦ **15 números**: R$ 3,50\n✦ **16 números**: R$ 56,00\n✦ **17 números**: R$ 476,00\n✦ **18 números**: R$ 2.856,00\n✦ **19 números**: R$ 13.566,00\n✦ **20 números**: R$ 54.264,00\n\n💡 *Dica do Consultor:* Minhas análises probabilísticas ajudam a escolher as 15 dezenas com maior probabilidade estatística para otimizar o seu investimento sem precisar gastar fortunes em bilhetes com mais números!`;
+    } else if (jogoAtivo === 'mega' || textoMinusculo.includes('mega') || textoMinusculo.includes('sena')) {
+      resposta = `A aposta simples da **Mega-Sena** (com **6 dezenas**) custa **R$ 6,00**. 💰\n\nSe você desejar marcar mais dezenas em um único cartão:\n\n✦ **6 números**: R$ 6,00\n✦ **7 números**: R$ 42,00\n✦ **8 números**: R$ 168,00\n✦ **9 números**: R$ 504,00\n✦ **10 números**: R$ 1.260,00\n✦ **20 números**: R$ 232.560,00\n\n👥 **Bolão Caixa:** Mínimo de R$ 18,00 (com cota mínima de R$ 7,00 por participante).`;
+    } else if (jogoAtivo === 'quina' || textoMinusculo.includes('quina')) {
+      resposta = `A aposta simples da **Quina** (com **5 dezenas**) custa **R$ 3,00**. 🎯\n\nVocê pode marcar de 5 a 15 números no volante. Quanto mais números marcar, maior o valor e maiores as suas chances de ganhar a Quina, Quadra, Terno ou Duque!`;
+    } else {
+      resposta = `Aqui estão os valores das apostas simples para as principais loterias da Caixa:\n\n🍀 **Lotofácil** (15 números): **R$ 3,50**\n💰 **Mega-Sena** (6 números): **R$ 6,00**\n🎯 **Quina** (5 números): **R$ 3,00**\n\nSe quiser saber o preço para jogar com mais números em alguma delas, é só me perguntar!`;
     }
-    else if (jogoAtivo === 'quina') {
-      preco = "R$ 3,00 (aposta simples de 5 dezenas)";
-      extra = "Você pode jogar até 15 números, e o preço aumenta progressivamente.";
-    }
-    else if (jogoAtivo === 'lotofacil') {
-      preco = "R$ 3,50 (aposta simples de 15 dezenas)";
-      extra = "Você pode jogar até 20 números, e o preço aumenta progressivamente.";
-    }
-
-    resposta = `O valor atual da aposta para a **${data.nome}** é de **${preco}**.\n\n${extra}`;
   }
   // 8. Prêmio e Estimativa
   else if (textoMinusculo.match(/(prêmio|premio|acumulou|valor|estimado|estimativa|dinheiro|pagar|milhões|milhoes)/)) {
@@ -744,6 +780,98 @@ const ApiService = {
     dot.className = `dot ${status === 'online' ? 'green' : status === 'offline' ? 'red' : 'yellow'}`;
     text.textContent = status === 'online' ? 'API Conectada' : status === 'offline' ? 'Modo Offline (Estatístico)' : 'Conectando...';
   },
+
+  async carregarMetricasLotofacilIA() {
+    try {
+      const res = await fetch(`${this.baseUrl}/lotofacil/ml-metrics`);
+      if (res.ok) {
+        const data = await res.json();
+        const mlpAcc = document.getElementById('ml-mlp-acc');
+        const rfAcc = document.getElementById('ml-rf-acc');
+        const clustersCount = document.getElementById('ml-clusters-count');
+        const mlpAcc2 = document.getElementById('ml-mlp-acc-2');
+        const rfAcc2 = document.getElementById('ml-rf-acc-2');
+        const clustersCount2 = document.getElementById('ml-clusters-count-2');
+
+        const mlpStr = `${(data.mlp_neural_network.accuracy * 100).toFixed(1)}%`;
+        const rfStr = `${(data.random_forest.accuracy * 100).toFixed(1)}%`;
+        const cStr = `${data.kmeans.n_clusters} Perfis`;
+
+        if (mlpAcc) mlpAcc.textContent = mlpStr;
+        if (rfAcc) rfAcc.textContent = rfStr;
+        if (clustersCount) clustersCount.textContent = cStr;
+        if (mlpAcc2) mlpAcc2.textContent = mlpStr;
+        if (rfAcc2) rfAcc2.textContent = rfStr;
+        if (clustersCount2) clustersCount2.textContent = cStr;
+
+        if (data.kmeans && data.kmeans.cluster_profiles) {
+          renderizarClustersKMeans(data.kmeans.cluster_profiles);
+        }
+        return data;
+      }
+    } catch (e) {
+      console.warn("API Lotofacil ml-metrics indisponível", e);
+    }
+    return null;
+  },
+
+  async carregarEstatisticasLotofacilIA() {
+    try {
+      const res = await fetch(`${this.baseUrl}/lotofacil/stats`);
+      if (res.ok) {
+        const data = await res.json();
+        renderizarHeatmapGrid(data.heatmaps);
+        renderizarGraficoFrequencia(data.probabilidades_dezenas);
+        return data;
+      }
+    } catch (e) {
+      console.warn("API Lotofacil stats indisponível", e);
+    }
+    return null;
+  },
+
+  async gerarPalpitesLotofacilIA(nGames = 1) {
+    try {
+      const res = await fetch(`${this.baseUrl}/lotofacil/generate-palpites?n_games=${nGames}`);
+      if (res.ok) {
+        return await res.json();
+      }
+    } catch (e) {
+      console.warn("API Lotofacil generate-palpites indisponível", e);
+    }
+    return null;
+  },
+
+  async gerarPalpitesCustomIA(params) {
+    try {
+      const nGames = params.n_games || 1;
+      const model = params.active_model || 'RandomForest';
+      const parity = params.parity_weight || 0.5;
+      const moldura = params.moldura_weight || 0.5;
+      const url = `${this.baseUrl}/lotofacil/generate-custom?n_games=${nGames}&active_model=${model}&parity_weight=${parity}&moldura_weight=${moldura}`;
+      const res = await fetch(url, { method: 'POST' });
+      if (res.ok) {
+        return await res.json();
+      }
+    } catch (e) {
+      console.warn("API Lotofacil generate-custom indisponível", e);
+    }
+    return null;
+  },
+
+  async atualizarBaseDadosLotofacilIA() {
+    try {
+      const res = await fetch(`${this.baseUrl}/lotofacil/update-dataset`, { method: 'POST' });
+      if (res.ok) {
+        return await res.json();
+      }
+    } catch (e) {
+      console.warn("API Lotofacil update-dataset indisponível", e);
+    }
+    return null;
+  },
+
+
 
   async carregarUltimoResultado(jogo) {
     this.setStatus('connecting');
@@ -930,3 +1058,113 @@ function toggleHistorico() {
     icon.textContent = '▼';
   }
 }
+
+/* ==========================================================================
+   FUNÇÕES DE INTERFACE DO LOTOFACIL_AGENT (4 ABAS & HEATMAPS)
+   ========================================================================== */
+
+function trocarSubAbaLotofacil(abaNome) {
+  const abas = ['dashboard', 'ml', 'palpiteiro', 'settings'];
+  abas.forEach(a => {
+    const btn = document.getElementById(`subtab-btn-${a}`);
+    const content = document.getElementById(`subtab-${a}`);
+    if (btn && content) {
+      if (a === abaNome) {
+        btn.classList.add('active');
+        btn.style.background = 'rgba(0, 255, 170, 0.15)';
+        btn.style.color = 'var(--neon-green)';
+        btn.style.borderColor = 'rgba(0, 255, 170, 0.3)';
+        content.style.display = 'block';
+      } else {
+        btn.classList.remove('active');
+        btn.style.background = 'rgba(255,255,255,0.05)';
+        btn.style.color = 'var(--text-secondary)';
+        btn.style.borderColor = 'rgba(255,255,255,0.1)';
+        content.style.display = 'none';
+      }
+    }
+  });
+
+  if (abaNome === 'dashboard' && typeof ApiService !== 'undefined' && ApiService.carregarEstatisticasLotofacilIA) {
+    ApiService.carregarEstatisticasLotofacilIA();
+  } else if (abaNome === 'ml' && typeof ApiService !== 'undefined' && ApiService.carregarMetricasLotofacilIA) {
+    ApiService.carregarMetricasLotofacilIA();
+  }
+}
+
+function renderizarHeatmapGrid(heatmapData) {
+  const gridContainer = document.getElementById('heatmap-grid-5x5');
+  if (!gridContainer || !heatmapData || !heatmapData.grid_5x5) return;
+
+  gridContainer.innerHTML = '';
+  heatmapData.grid_5x5.forEach(row => {
+    row.forEach(item => {
+      const cell = document.createElement('div');
+      const pct = item.frequencia_pct;
+      
+      let bg = 'rgba(0, 255, 170, 0.1)';
+      let color = '#55ffb8';
+      if (pct >= 61) {
+        bg = 'rgba(255, 68, 68, 0.25)';
+        color = '#ff6b6b';
+      } else if (pct < 58.5) {
+        bg = 'rgba(85, 212, 255, 0.15)';
+        color = '#55d4ff';
+      }
+      
+      cell.style.cssText = `background: ${bg}; color: ${color}; border: 1px solid rgba(255,255,255,0.08); border-radius: 6px; padding: 4px; text-align: center; font-size: 0.72rem; font-weight: bold; display: flex; flex-direction: column; align-items: center; justify-content: center;`;
+      cell.innerHTML = `<span>${String(item.numero).padStart(2, '0')}</span><span style="font-size: 0.6rem; opacity: 0.8; font-weight: normal;">${pct}%</span>`;
+      gridContainer.appendChild(cell);
+    });
+  });
+}
+
+function renderizarGraficoFrequencia(ranking) {
+  const chartContainer = document.getElementById('frequency-bar-chart');
+  if (!chartContainer || !ranking) return;
+
+  chartContainer.innerHTML = '';
+  const top15 = ranking.slice(0, 15);
+  const maxPct = Math.max(...top15.map(d => d.percentual));
+
+  top15.forEach(item => {
+    const bar = document.createElement('div');
+    const h = (item.percentual / maxPct) * 100;
+    let bg = item.status === 'Quente' ? '#ff5555' : (item.status === 'Fria' ? '#55d4ff' : '#55ffb8');
+    
+    bar.style.cssText = `flex: 1; height: ${h}%; background: ${bg}; border-radius: 3px 3px 0 0; position: relative; transition: height 0.5s ease;`;
+    bar.title = `Dezena ${item.numero}: ${item.percentual}%`;
+    chartContainer.appendChild(bar);
+  });
+}
+
+function renderizarClustersKMeans(profiles) {
+  const container = document.getElementById('kmeans-clusters-container');
+  if (!container || !profiles) return;
+  container.innerHTML = '';
+
+  profiles.forEach(p => {
+    const item = document.createElement('div');
+    item.style.cssText = 'background: rgba(0,0,0,0.2); padding: 6px; border-radius: 6px; font-size: 0.72rem; display: flex; justify-content: space-between; align-items: center;';
+    item.innerHTML = `
+      <span style="font-weight: bold; color: #ffb855;">Cluster #${p.cluster_id + 1} (${p.pct.toFixed(1)}%)</span>
+      <span style="color: var(--text-secondary);">${p.avg_evens.toFixed(1)} Pares | ${p.avg_moldura.toFixed(1)} Moldura | Soma ~${p.avg_sum.toFixed(0)}</span>
+    `;
+    container.appendChild(item);
+  });
+}
+
+async function atualizarBaseDadosLotofacil() {
+  if (typeof mostrarToast !== 'undefined') mostrarToast('Atualizando histórico e retreinando IA...', 'info');
+  if (typeof ApiService !== 'undefined' && ApiService.atualizarBaseDadosLotofacilIA) {
+    const res = await ApiService.atualizarBaseDadosLotofacilIA();
+    if (res && res.status === 'success') {
+      if (typeof mostrarToast !== 'undefined') mostrarToast(`Base atualizada! Total de ${res.total_concursos} concursos.`, 'success');
+      ApiService.carregarMetricasLotofacilIA();
+      ApiService.carregarEstatisticasLotofacilIA();
+    } else {
+      if (typeof mostrarToast !== 'undefined') mostrarToast('Erro ao atualizar base de dados.', 'error');
+    }
+  }
+}
+

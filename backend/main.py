@@ -191,10 +191,92 @@ def obter_noticias(jogo: str):
         # Fallback silencioso em caso de erro na API de notícias
         return {"status": "error", "articles": []}
 
+# --- LOTOFACIL AGENT ENDPOINTS ---
+try:
+    from lotofacil_agent.manager import lotofacil_manager
+except Exception as e:
+        print(f"[Main] Aviso ao importar LotofacilAgentManager: {e}")
+        lotofacil_manager = None
+
+@app.get("/api/lotofacil/stats")
+def obter_estatisticas_lotofacil():
+    """Retorna estatísticas detalhadas, mapa de calor e probabilidade do Lotofacil_Agent"""
+    if not lotofacil_manager:
+        raise HTTPException(status_code=503, detail="Módulo Lotofacil_Agent não inicializado")
+    try:
+        return lotofacil_manager.get_full_stats()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/lotofacil/ml-metrics")
+def obter_metricas_ml_lotofacil():
+    """Retorna relatório de desempenho dos modelos ML (KMeans, RF, MLP)"""
+    if not lotofacil_manager:
+        raise HTTPException(status_code=503, detail="Módulo Lotofacil_Agent não inicializado")
+    try:
+        return lotofacil_manager.get_ml_metrics()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/lotofacil/generate-palpites")
+@app.get("/api/lotofacil/generate-palpites")
+def gerar_palpites_lotofacil(
+    n_games: int = 5,
+    active_model: str = "RandomForest",
+    parity_weight: float = 0.5,
+    moldura_weight: float = 0.5
+):
+    """Gera N palpites inteligentes de 15 dezenas com IA Probabilística"""
+    if not lotofacil_manager:
+        raise HTTPException(status_code=503, detail="Módulo Lotofacil_Agent não inicializado")
+    try:
+        return lotofacil_manager.generate_palpites(
+            n_games=n_games,
+            active_model=active_model,
+            parity_weight=parity_weight,
+            moldura_weight=moldura_weight
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/lotofacil/generate-custom")
+@app.get("/api/lotofacil/generate-custom")
+def gerar_palpites_custom_lotofacil(
+    n_games: int = 5,
+    active_model: str = "RandomForest",
+    parity_weight: float = 0.5,
+    moldura_weight: float = 0.5
+):
+    """Gera palpites aceitando pesos customizados e escolha do modelo ativo"""
+    if not lotofacil_manager:
+        raise HTTPException(status_code=503, detail="Módulo Lotofacil_Agent não inicializado")
+    try:
+        return lotofacil_manager.generate_palpites(
+            n_games=n_games,
+            active_model=active_model,
+            parity_weight=parity_weight,
+            moldura_weight=moldura_weight
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/lotofacil/update-dataset")
+@app.get("/api/lotofacil/update-dataset")
+def atualizar_base_dados_lotofacil():
+    """Força o recarregamento do histórico de concursos (Excel/API) e retreinamento dos modelos"""
+    if not lotofacil_manager:
+        raise HTTPException(status_code=503, detail="Módulo Lotofacil_Agent não inicializado")
+    try:
+        return lotofacil_manager.reload_dataset()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 from fastapi.staticfiles import StaticFiles
 
 # Servir a pasta raiz do projeto como estática na raiz (/) da API
 app.mount("/", StaticFiles(directory="../", html=True), name="static")
+
 
 if __name__ == "__main__":
     import uvicorn
