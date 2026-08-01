@@ -57,6 +57,42 @@
             Lotofácil
           </button>
         </nav>
+
+        <!-- Widget de Data e Hora em Tempo Real (Relógio ao lado da Data) -->
+        <div class="header-datetime" id="header-datetime" title="Data e Hora Atual em Tempo Real">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="clock-icon">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polyline points="12 6 12 12 16 14"></polyline>
+          </svg>
+          <span id="live-date" class="datetime-text">--/--/----</span>
+          <span class="datetime-divider">|</span>
+          <span id="live-clock" class="datetime-text datetime-highlight">00:00:00</span>
+        </div>
+        <script>
+          (function startLiveClock() {
+            function updateClock() {
+              try {
+                var now = new Date();
+                var clockEl = document.getElementById('live-clock');
+                var dateEl = document.getElementById('live-date');
+                var agentTimeEl = document.getElementById('agent-live-datetime');
+
+                var timeStr = now.toLocaleTimeString('pt-BR');
+                var days = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
+                var dayWeek = days[now.getDay()];
+                var day = String(now.getDate()).padStart(2, '0');
+                var month = String(now.getMonth() + 1).padStart(2, '0');
+                var year = now.getFullYear();
+                var dateStr = dayWeek + ", " + day + "/" + month + "/" + year;
+
+                if (clockEl) clockEl.textContent = timeStr;
+                if (dateEl) dateEl.textContent = dateStr;
+              } catch (e) { console.error('Erro relógio:', e); }
+            }
+            updateClock();
+            setInterval(updateClock, 1000);
+          })();
+        </script>
       </header>
 
       <!-- Área do Desenho (Exibição da Imagem Original sem sobreposição) -->
@@ -392,7 +428,7 @@
   <div id="toast-container" class="toast-container"></div>
 
   <!-- JavaScript -->
-  <script src="app.js?v=1.0.2"></script>
+  <script src="app.js?v=1.0.4"></script>
 </body>
 
 </html>

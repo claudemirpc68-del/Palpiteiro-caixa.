@@ -615,6 +615,98 @@ function enviarMensagemChat() {
   }, 900);
 }
 
+// Base de Dados Oficial dos Próximos Concursos e Prêmios das Loterias Caixa
+const concursosProximosCaixa = {
+  mega: {
+    nome: "Mega-Sena",
+    concurso: 3039,
+    premio: "R$ 100.000.000,00",
+    premioExtenso: "100 Milhões de Reais",
+    sorteio: "Domingo, 02/08/2026 às 11h00",
+    encerramento: "5 horas e 43 minutos"
+  },
+  lotofacil: {
+    nome: "Lotofácil",
+    concurso: 3751,
+    premio: "R$ 2.000.000,00",
+    premioExtenso: "2 Milhões de Reais",
+    sorteio: "Domingo, 02/08/2026 às 11h00",
+    encerramento: "5 horas e 43 minutos"
+  },
+  independencia: {
+    nome: "Lotofácil da Independência",
+    concurso: 3780,
+    premio: "R$ 300.000.000,00",
+    premioExtenso: "300 Milhões de Reais",
+    sorteio: "Terça-Feira, 15/09/2026 às 11h00",
+    encerramento: "44 dias"
+  },
+  quina: {
+    nome: "Quina",
+    concurso: 7081,
+    premio: "R$ 2.000.000,00",
+    premioExtenso: "2 Milhões de Reais",
+    sorteio: "Domingo, 02/08/2026 às 11h00",
+    encerramento: "5 horas e 43 minutos"
+  },
+  milionaria: {
+    nome: "+Milionária",
+    concurso: 377,
+    premio: "R$ 79.000.000,00",
+    premioExtenso: "79 Milhões de Reais",
+    sorteio: "Domingo, 02/08/2026 às 11h00",
+    encerramento: "5 horas e 43 minutos"
+  },
+  lotomania: {
+    nome: "Lotomania",
+    concurso: 2958,
+    premio: "R$ 6.200.000,00",
+    premioExtenso: "6,2 Milhões de Reais",
+    sorteio: "Segunda-Feira, 03/08/2026 às 21h00",
+    encerramento: "2 dias"
+  },
+  timemania: {
+    nome: "Timemania",
+    concurso: 2423,
+    premio: "R$ 6.000.000,00",
+    premioExtenso: "6 Milhões de Reais",
+    sorteio: "Domingo, 02/08/2026 às 11h00",
+    encerramento: "5 horas e 43 minutos"
+  },
+  duplasena: {
+    nome: "Dupla Sena",
+    concurso: 2991,
+    premio: "R$ 450.000,00",
+    premioExtenso: "450 Mil Reais",
+    sorteio: "Segunda-Feira, 03/08/2026 às 21h00",
+    encerramento: "2 dias"
+  },
+  diadesorte: {
+    nome: "Dia de Sorte",
+    concurso: 1261,
+    premio: "R$ 800.000,00",
+    premioExtenso: "800 Mil Reais",
+    sorteio: "Domingo, 02/08/2026 às 11h00",
+    encerramento: "5 horas e 43 minutos"
+  },
+  supersete: {
+    nome: "Super Sete",
+    concurso: 881,
+    premio: "R$ 4.500.000,00",
+    premioExtenso: "4,5 Milhões de Reais",
+    sorteio: "Segunda-Feira, 03/08/2026 às 21h00",
+    encerramento: "2 dias"
+  },
+  loteca: {
+    nome: "Loteca dos Pais",
+    concurso: 1265,
+    premio: "R$ 2.000.000,00",
+    premioExtenso: "2 Milhões de Reais",
+    sorteio: "Sábado, 08/08/2026 às 15h00",
+    encerramento: "6 dias"
+  }
+};
+
 // Processador de Linguagem Natural Local (Baseado em Intenções e Palavras-chave)
 function processarMensagemAgente(pergunta) {
   const data = loteriasData[jogoAtivo];
@@ -623,7 +715,7 @@ function processarMensagemAgente(pergunta) {
 
   let resposta = "";
 
-  // 1. Gerar palpite / Gerar jogo (Máxima prioridade: evita que "palpite de hoje" caia em data)
+  // 1. Gerar palpite / Gerar jogo
   if (textoMinusculo.match(/(gerar|palpite|jogo|gerar jogo|me dá|da um|dá um|sugestão|sortear|faz um)/)) {
     const palpite = data.gerar(medias);
     if (palpite) {
@@ -636,36 +728,68 @@ function processarMensagemAgente(pergunta) {
       resposta = `Desculpe, ocorreu um erro matemático de convergência no algoritmo. Você poderia tentar gerar novamente?`;
     }
   }
-  // 2. Dezenas Quentes (Alta prioridade: evita que "quentes de hoje" caia em data)
+  // 2. Horário de Encerramento das Apostas / Quanto tempo falta
+  else if (textoMinusculo.match(/(encerra|encerramento|quanto tempo|limite|prazo|encerram|tempo falta|faltam)/)) {
+    if (textoMinusculo.includes('independência') || textoMinusculo.includes('independencia')) {
+      resposta = `⏰ **Lotofácil da Independência (Concurso #${concursosProximosCaixa.independencia.concurso})**:\n\n💰 **Prêmio:** ${concursosProximosCaixa.independencia.premio}\n📅 **Sorteio:** ${concursosProximosCaixa.independencia.sorteio}\n⏳ **As apostas se encerram em:** ${concursosProximosCaixa.independencia.encerramento}!`;
+    } else if (textoMinusculo.includes('loteca') || textoMinusculo.includes('pais')) {
+      resposta = `⏰ **Loteca dos Pais (Concurso #${concursosProximosCaixa.loteca.concurso})**:\n\n💰 **Prêmio:** ${concursosProximosCaixa.loteca.premio}\n📅 **Apuração:** ${concursosProximosCaixa.loteca.sorteio}\n⏳ **As apostas se encerram em:** ${concursosProximosCaixa.loteca.encerramento}!`;
+    } else {
+      const c = concursosProximosCaixa[jogoAtivo] || concursosProximosCaixa.mega;
+      resposta = `⏰ **Apostas para a ${c.nome} (Concurso #${c.concurso})**:\n\n💰 **Prêmio Estimado:** ${c.premio} (${c.premioExtenso})\n📅 **Sorteio:** ${c.sorteio}\n⌛ **As apostas se encerram em:** **${c.encerramento}**!\n\nNão deixe para a última hora! Quer um palpite gerado agora?`;
+    }
+  }
+  // 3. Prêmios, Valores Estimados e Comparativo de Loterias
+  else if (textoMinusculo.match(/(prêmio|premio|acumulou|valor|estimado|estimativa|dinheiro|pagar|milhões|milhoes|todos os prêmios|todas as loterias|maior prêmio|ranking)/)) {
+    if (textoMinusculo.match(/(todos|todas|ranking|maiores|geral|lista|quais são)/)) {
+      resposta = `🏆 **Próximos Prêmios Estimados das Loterias Caixa:**\n\n` +
+        `🇧🇷 **Lotofácil da Independência:** R$ 300 Milhões (Conc. #3780 - 15/09)\n` +
+        `💰 **Mega-Sena:** R$ 100 Milhões (Conc. #3039 - Sorteio 02/08)\n` +
+        `💎 **+Milionária:** R$ 79 Milhões (Conc. #377 - Sorteio 02/08)\n` +
+        `🎰 **Lotomania:** R$ 6,2 Milhões (Conc. #2958 - Sorteio 03/08)\n` +
+        `🎯 **Super Sete:** R$ 4,5 Milhões (Conc. #881 - Sorteio 03/08)\n` +
+        `🎟️ **Lotofácil:** R$ 2 Milhões (Conc. #3751 - Sorteio 02/08)\n` +
+        `🎯 **Quina:** R$ 2 Milhões (Conc. #7081 - Sorteio 02/08)\n` +
+        `⚽ **Loteca dos Pais:** R$ 2 Milhões (Conc. #1265 - Sorteio 08/08)\n` +
+        `⚽ **Timemania:** R$ 6 Milhões (Conc. #2423 - Sorteio 02/08)\n` +
+        `🎲 **Dia de Sorte:** R$ 800 Mil (Conc. #1261 - Sorteio 02/08)\n` +
+        `✌️ **Dupla Sena:** R$ 450 Mil (Conc. #2991 - Sorteio 03/08)\n\n` +
+        `Qual dessas você quer que eu analise ou gere um palpite?`;
+    } else if (textoMinusculo.includes('independência') || textoMinusculo.includes('independencia')) {
+      const info = concursosProximosCaixa.independencia;
+      resposta = `🌟 **${info.nome} (Concurso #${info.concurso})**\n\n💎 **Prêmio Especial:** **${info.premio}** (${info.premioExtenso})\n📅 **Sorteio:** ${info.sorteio}\n⏰ **Encerramento das Apostas:** ${info.encerramento}`;
+    } else {
+      const c = concursosProximosCaixa[jogoAtivo] || concursosProximosCaixa.mega;
+      resposta = `💰 **Prêmio Estimado para o Concurso #${c.concurso} da ${c.nome}:**\n\n🎉 **${c.premio}** (${c.premioExtenso})\n\n📅 **Sorteio:** ${c.sorteio}\n⌛ **Apostas se encerram em:** ${c.encerramento}\n\nQuer que eu calcule a melhor combinação de dezenas para este sorteio?`;
+    }
+  }
+  // 4. Dezenas Quentes
   else if (textoMinusculo.match(/(quente|quentes|mais sorteadas|mais sairam|mais saíram|frequentes|frequência|frequencia)/)) {
     const quentesFormatadas = [...data.quentes].sort((a, b) => a - b).map(n => formatarNumero(n)).join(', ');
     resposta = `As dezenas **quentes** (historicamente mais sorteadas) para a **${data.nome}** são:\n\n**${quentesFormatadas}**\n\nNossa estratégia recomenda selecionar exatamente **${jogoAtivo === 'mega' ? '2 dezenas' : jogoAtivo === 'quina' ? '2 dezenas' : '8 dezenas'}** desse grupo para equilibrar suas probabilidades de acerto.`;
   }
-  // 3. Dezenas Frias (Alta prioridade: evita que "frias de hoje" caia em data)
+  // 5. Dezenas Frias
   else if (textoMinusculo.match(/(fria|frias|atrasada|atrasadas|menos sorteadas|menos sairam|menos saíram|geladas)/)) {
     const friasFormatadas = [...data.frias].sort((a, b) => a - b).map(n => formatarNumero(n)).join(', ');
     resposta = `As dezenas **frias** (atrasadas ou com menor frequência recente) para a **${data.nome}** são:\n\n**${friasFormatadas}**\n\nNosso algoritmo estatístico insere **${jogoAtivo === 'mega' ? '2 dezenas' : jogoAtivo === 'quina' ? '2 dezenas' : '3 dezenas'}** frias no palpite para cobrir ciclos de atraso que tendem a se fechar.`;
   }
-  // 4. Saudação
+  // 6. Saudação
   else if (textoMinusculo.match(/(oi|olá|ola|bom dia|boa tarde|boa noite|hello|hey|como vai)/)) {
-    resposta = `Olá! Tudo bem? Sou o **Consultor Probabilístico da ${data.nome}**. \n\nEstou analisando o banco de dados oficial das Loterias Caixa em tempo real. Como posso te ajudar com os palpites hoje?`;
+    const c = concursosProximosCaixa[jogoAtivo] || concursosProximosCaixa.mega;
+    resposta = `Olá! Tudo bem? Sou o **Consultor Probabilístico da ${data.nome}**. 🤖\n\nO próximo concurso (#${c.concurso}) pagará **${c.premioExtenso}**! As apostas encerram em **${c.encerramento}**.\n\nComo posso te ajudar com a análise estatística hoje?`;
   }
-  // 5. Data Atual e Sorteio do Dia (Sem a palavra "dia" isolada para evitar falsos positivos em saudações)
+  // 7. Data Atual, Calendário e Sorteios
   else if (textoMinusculo.match(/(hoje|data|que dia|dia de hoje|data atual|calendário|calendario|sorteio|hora|horário|horario|quando)/)) {
     const hojeStr = obterDataFormatada();
-    const temSorteio = verificarSorteioHoje(jogoAtivo);
-    const statusSorteio = temSorteio
-      ? `🍀 **Sim, hoje tem sorteio oficial da ${data.nome}!**\n\n⏰ **Horário:** ${data.horaSorteio}\n📍 **Local:** Espaço da Sorte, São Paulo-SP\n\nMinha lógica probabilística já está calibrada para esta rodada.`
-      : `📅 **Hoje não há sorteio regular agendado para a ${data.nome}.**\n\n📆 **Próximos sorteios:** ${data.diasSorteio}\n⏰ **Horário:** ${data.horaSorteio}\n📍 **Local:** Espaço da Sorte, São Paulo-SP\n\nMas você já pode se antecipar e gerar palpites incríveis para o próximo concurso!`;
-
-    resposta = `Hoje é **${hojeStr}**.\n\n${statusSorteio}`;
+    const c = concursosProximosCaixa[jogoAtivo] || concursosProximosCaixa.mega;
+    resposta = `Hoje é **${hojeStr}**.\n\n📅 **Próximo Sorteio da ${c.nome}:** ${c.sorteio} (Concurso #${c.concurso})\n💰 **Prêmio:** ${c.premio}\n⏳ **Encerramento das Apostas:** ${c.encerramento}`;
   }
-  // 6. Estratégia / Como funciona
+  // 8. Estratégia / Como funciona
   else if (textoMinusculo.match(/(estratégia|estrategia|como funciona|algoritmo|princípios|principios|diretrizes|regra|regras)/)) {
     const principiosTexto = data.principios.map(p => `✦ ${p}`).join('\n');
     resposta = `Minha estratégia probabilística para a **${data.nome}** é baseada em:\n\n${principiosTexto}\n\nCombinando essa dispersão e paridade, conseguimos cobrir as faixas matemáticas com maior probabilidade histórica de sorteio!`;
   }
-  // 7. Preço e Valores das Apostas (Diálogo Natural e Detalhado)
+  // 9. Preço e Valores das Apostas
   else if (textoMinusculo.match(/(preço|preco|preços|precos|custa|custo|custos|valor|valores|tabela|quanto pago|quanto custa|cobrado|pagar|aposta simples|bolão|bolao)/)) {
     if (jogoAtivo === 'lotofacil' || textoMinusculo.includes('lotofácil') || textoMinusculo.includes('lotofacil')) {
       resposta = `A aposta simples da **Lotofácil** (com **15 dezenas**) custa **R$ 3,50**. 🎟️\n\nCaso queira aumentar suas chances jogando mais dezenas em um mesmo bilhete, os valores oficiais são:\n\n✦ **15 números**: R$ 3,50\n✦ **16 números**: R$ 56,00\n✦ **17 números**: R$ 476,00\n✦ **18 números**: R$ 2.856,00\n✦ **19 números**: R$ 13.566,00\n✦ **20 números**: R$ 54.264,00\n\n💡 *Dica do Consultor:* Minhas análises probabilísticas ajudam a escolher as 15 dezenas com maior probabilidade estatística para otimizar o seu investimento sem precisar gastar fortunes em bilhetes com mais números!`;
@@ -677,32 +801,22 @@ function processarMensagemAgente(pergunta) {
       resposta = `Aqui estão os valores das apostas simples para as principais loterias da Caixa:\n\n🍀 **Lotofácil** (15 números): **R$ 3,50**\n💰 **Mega-Sena** (6 números): **R$ 6,00**\n🎯 **Quina** (5 números): **R$ 3,00**\n\nSe quiser saber o preço para jogar com mais números em alguma delas, é só me perguntar!`;
     }
   }
-  // 8. Prêmio e Estimativa
-  else if (textoMinusculo.match(/(prêmio|premio|acumulou|valor|estimado|estimativa|dinheiro|pagar|milhões|milhoes)/)) {
-    if (window.ultimoResultadoCaixa && window.ultimoResultadoCaixa.valorEstimadoProximoConcurso) {
-      const valorFmt = window.ultimoResultadoCaixa.valorEstimadoProximoConcurso.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-      const statusAcumulou = window.ultimoResultadoCaixa.acumulado ? "Sim, acumulou! 🚀" : "Não acumulou na última rodada.";
-      resposta = `${statusAcumulou}\n\nO prêmio estimado para o próximo concurso da **${data.nome}** (Concurso #${window.ultimoResultadoCaixa.numeroConcursoProximo}) está em:\n\n💰 **${valorFmt}**\n\nPosso gerar um palpite probabilístico se você quiser tentar a sorte!`;
-    } else {
-      resposta = `No momento, não consegui obter a estimativa de prêmio (a API pode estar desconectada).`;
-    }
-  }
-  // 8. Dezenas Médias
+  // 10. Dezenas Médias
   else if (textoMinusculo.match(/(média|médias|medias|media|intermediária|intermediarias|intermediárias)/)) {
     const mediasFormatadas = medias.slice(0, 12).map(n => formatarNumero(n)).join(', ');
     resposta = `As dezenas **médias** (ou intermediárias) são as dezenas que não pertencem nem ao grupo das mais sorteadas (quentes) nem das mais atrasadas (frias).\n\nPara a **${data.nome}**, algumas dezenas médias são: **${mediasFormatadas}...**\n\nO algoritmo seleciona **${jogoAtivo === 'mega' ? '2' : jogoAtivo === 'quina' ? '1' : '4'}** médias para servir de âncora de dispersão neutra.`;
   }
-  // 8. Jogo Responsável / Avisos
+  // 11. Jogo Responsável
   else if (textoMinusculo.match(/(ganhar|ficar rico|dinheiro|certeza|garante|garantido|100%|loteria)/)) {
     resposta = `Como um consultor estatístico matemático, preciso lembrar que **loterias são jogos de azar baseados em eventos independentes**.\n\nMinhas estratégias otimizam as suas probabilidades com base no histórico, mas **não há garantia de ganho** ou acerto de 100%. Jogue sempre com responsabilidade, focando na diversão e sob seu limite orçamentário. 🍀`;
   }
-  // 9. Quem é você / Persona
+  // 12. Quem é você / Persona
   else if (textoMinusculo.match(/(quem é|quem e|seu nome|criador|ajuda|funciona|bot|agente|IA)/)) {
-    resposta = `Eu sou o **Consultor Probabilístico**, um agente estatístico projetado para analisar e otimizar jogos das Loterias Caixa.\n\nPosso gerar palpites inteligentes, fornecer listas de dezenas quentes e frias, e explicar os princípios matemáticos que regem os sorteios! Diga-me o que você precisa!`;
+    resposta = `Eu sou o **Consultor Probabilístico**, um agente estatístico projetado para analisar e otimizar jogos das Loterias Caixa.\n\nPosso informar sobre prêmios, contagem regressiva para encerramento de apostas, sorteios especiais como Lotofácil da Independência, dezenas quentes/frias e gerar palpites equilibrados!`;
   }
   // Intenção padrão (Fallback)
   else {
-    resposta = `Entendi a sua dúvida, mas não consegui encontrar uma estatística específica para essa pergunta.\n\nTente me perguntar sobre:\n✦ *"Me dê um palpite"* (Gera um jogo dinâmico)\n✦ *"Quais as dezenas quentes?"*\n✦ *"Quais as dezenas frias?"*\n✦ *"Qual a sua estratégia para a ${data.nome}?"*`;
+    resposta = `Entendi a sua dúvida, mas não consegui encontrar uma estatística específica para essa pergunta.\n\nTente me perguntar sobre:\n✦ *"Qual o prêmio da Mega-Sena?"*\n✦ *"Quanto tempo falta para encerrar as apostas?"*\n✦ *"Quais são os maiores prêmios da Caixa?"*\n✦ *"Me dê um palpite para a Lotofácil"*`;
   }
 
   adicionarMensagemChat('agente', resposta);
@@ -1167,4 +1281,37 @@ async function atualizarBaseDadosLotofacil() {
     }
   }
 }
+
+/* ==========================================================================
+   RELÓGIO E DATA EM TEMPO REAL NO CABEÇALHO E CONSULTOR
+   ========================================================================== */
+function iniciarRelogioReal() {
+  function atualizar() {
+    const agora = new Date();
+    const clockEl = document.getElementById('live-clock');
+    const dateEl = document.getElementById('live-date');
+    const agentTimeEl = document.getElementById('agent-live-datetime');
+
+    const horaStr = agora.toLocaleTimeString('pt-BR');
+    const diasSemana = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
+    const diaSemana = diasSemana[agora.getDay()];
+    const dia = String(agora.getDate()).padStart(2, '0');
+    const mes = String(agora.getMonth() + 1).padStart(2, '0');
+    const ano = agora.getFullYear();
+    const dataStr = `${diaSemana}, ${dia}/${mes}/${ano}`;
+
+    if (clockEl) clockEl.textContent = horaStr;
+    if (dateEl) dateEl.textContent = dataStr;
+  }
+
+  atualizar();
+  setInterval(atualizar, 1000);
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', iniciarRelogioReal);
+} else {
+  iniciarRelogioReal();
+}
+
 

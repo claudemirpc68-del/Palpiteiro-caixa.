@@ -141,6 +141,50 @@ body {
   z-index: 10;
 }
 
+/* Widget de Relógio e Data Lado a Lado no Cabeçalho */
+.header-datetime {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid var(--border-light);
+  padding: 6px 14px;
+  border-radius: 10px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.header-datetime .clock-icon {
+  color: var(--neon-cyan);
+  animation: clockPulse 2s infinite ease-in-out;
+  flex-shrink: 0;
+}
+
+@keyframes clockPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.7; transform: scale(0.95); }
+}
+
+.datetime-text {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  letter-spacing: 0.5px;
+}
+
+.datetime-highlight {
+  font-size: 0.85rem;
+  color: var(--neon-cyan);
+  font-weight: 700;
+  font-family: monospace, 'Outfit', sans-serif;
+}
+
+.datetime-divider {
+  color: rgba(255, 255, 255, 0.3);
+  font-size: 0.85rem;
+}
+
 .logo-area {
   display: flex;
   align-items: center;
